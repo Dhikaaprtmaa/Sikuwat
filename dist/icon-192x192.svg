@@ -1,0 +1,19 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="192" height="192" fill="#10b981" rx="45"/>
+  
+  <!-- Leaf shape for Sikuwat (agricultural theme) -->
+  <g transform="translate(96, 96)">
+    <!-- Left leaf -->
+    <path d="M -30 0 Q -45 -25 -40 -50 Q -35 -45 -25 -40 Q -20 -30 -15 -15 Q -10 -5 0 0 Z" fill="#ffffff" opacity="0.9"/>
+    
+    <!-- Right leaf -->
+    <path d="M 30 0 Q 45 -25 40 -50 Q 35 -45 25 -40 Q 20 -30 15 -15 Q 10 -5 0 0 Z" fill="#ffffff" opacity="0.7"/>
+    
+    <!-- Center stem -->
+    <path d="M 0 0 L 0 40 Q -3 50 0 60" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round"/>
+    
+    <!-- Bottom leaf -->
+    <path d="M 0 50 Q -15 55 -20 70 Q -10 65 0 65 Q 10 65 20 70 Q 15 55 0 50 Z" fill="#ffffff" opacity="0.8"/>
+  </g>
+</svg>

@@ -1,1 +1,13 @@
 node_modules
+
+# Local environment files (do not commit)
+.env
+.env.*
+.env.local
+
+# VS Code
+.vscode/
+
+# Build outputs
+dist/
+build/

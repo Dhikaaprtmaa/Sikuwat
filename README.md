@@ -1,5 +1,5 @@
 
-  # Sikuwat Web App Design
+  # Sikuwat Web App
 
   ## Running the code
 

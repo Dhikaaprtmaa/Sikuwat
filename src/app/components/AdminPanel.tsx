@@ -908,22 +908,35 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
     setLoading(true);
     try {
       console.log('💾 [TIP] Saving tip to Supabase...');
+      console.log('📝 Data yang dikirim:', {
+        id: `tip_${Date.now()}`,
+        title: tipForm.title.trim(),
+        content: tipForm.content.trim(),
+        category: tipForm.category?.trim() || 'general'
+      });
 
-      // Insert langsung ke Supabase (primary method)
+      // Insert langsung ke Supabase dengan ID explisit (primary method)
+      const tipId = `tip_${Date.now()}`;
       const { data: insertedData, error: dbError } = await supabase
         .from('tips')
         .insert({
-          title: tipForm.title,
-          content: tipForm.content,
-          category: tipForm.category || 'general',
-          description: tipForm.content
+          id: tipId,
+          title: tipForm.title.trim(),
+          content: tipForm.content.trim(),
+          category: tipForm.category?.trim() || 'general',
+          created_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (dbError) {
-        console.error('❌ [TIP] Supabase insert failed:', dbError);
-        throw dbError;
+        console.error('❌ [TIP] ERROR RESPONSE FROM SUPABASE:');
+        console.error('Full error object:', JSON.stringify(dbError, null, 2));
+        console.error('Error code:', dbError.code);
+        console.error('Error message:', dbError.message);
+        console.error('Error details:', dbError.details);
+        console.error('Error hint:', dbError.hint);
+        throw new Error(`[${dbError.code}] ${dbError.message}${dbError.hint ? ' - ' + dbError.hint : ''}`);
       }
 
       console.log('✅ [TIP] Saved to Supabase:', insertedData);
@@ -941,40 +954,42 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
       // Close dialog if open
       setShowTipDialog(false);
     } catch (error: any) {
-      console.warn('❌ [TIP] Save failed, falling back to localStorage:', error?.message || error);
+      console.error('🔴 CATCH BLOCK ERROR:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
 
-      // Create a local optimistic tip entry
-      const tempId = generateTempId();
-      const localTip = {
-        id: tempId,
-        title: tipForm.title,
-        content: tipForm.content,
-        category: tipForm.category || 'general',
-        description: tipForm.content,
-        created_at: new Date().toISOString(),
-        updated_at: null
-      };
+      let errorMessage = 'Terjadi kesalahan saat menyimpan tips';
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.error_description) {
+        errorMessage = error.error_description;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
 
+      console.log('📢 Error message yang ditampilkan:', errorMessage);
+      toast.error(errorMessage);
+
+      // Fallback: save tip locally with a temp id so admin still sees it
       try {
+        const tempId = generateTempId();
+        const localTip = {
+          id: tempId,
+          title: tipForm.title.trim(),
+          content: tipForm.content.trim(),
+          category: tipForm.category?.trim() || 'general',
+          created_at: new Date().toISOString(),
+          updated_at: null
+        };
         const existing = JSON.parse(localStorage.getItem('tips') || '[]');
         const updated = [localTip, ...existing];
         localStorage.setItem('tips', JSON.stringify(updated));
         setTips((prev: any[]) => [localTip, ...prev]);
         setTipForm({ title: '', content: '', category: '' });
-        setShowTipDialog(false);
         toast.success('✅ Tips disimpan secara lokal (offline). Akan disinkronkan saat koneksi tersedia.');
         window.dispatchEvent(new Event('dataUpdated'));
       } catch (lsErr) {
         console.error('❌ [TIP] Failed to save locally:', lsErr);
-        let errorMessage = 'Terjadi kesalahan saat menyimpan tips';
-        if (error instanceof Error) {
-          if (error.message.includes('permission') || error.message.includes('policy')) {
-            errorMessage = 'Anda tidak memiliki izin untuk menyimpan data.';
-          } else {
-            errorMessage = error.message || errorMessage;
-          }
-        }
-        toast.error(errorMessage);
       }
     } finally {
       setLoading(false);

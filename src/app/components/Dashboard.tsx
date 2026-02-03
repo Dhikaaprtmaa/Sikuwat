@@ -278,29 +278,46 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
     }
     setSavingTip(true);
     try {
+      const tipId = `tip_${Date.now()}`;
       const payload: any = {
+        id: tipId,
         title: newTipTitle.trim(),
         content: newTipContent.trim(),
-        category: newTipCategory.trim() || 'umum',
+        category: newTipCategory.trim() || 'general',
         created_at: new Date().toISOString()
       };
+      console.log('💾 [TIP-Dashboard] Saving tip:', payload);
+      
       const { data: inserted, error } = await supabase.from('tips').insert([payload]).select().maybeSingle();
-      if (error) throw error;
+      
+      if (error) {
+        console.error('❌ [TIP-Dashboard] Error inserting:', error);
+        throw error;
+      }
+      
+      console.log('✅ [TIP-Dashboard] Saved successfully:', inserted);
+      
       // Merge into local state and localStorage
       setTips(prev => [inserted, ...prev].slice(0, 20));
       try {
         const local = JSON.parse(localStorage.getItem('tips') || '[]');
         localStorage.setItem('tips', JSON.stringify([inserted, ...local]));
       } catch (e) {
-        // ignore
+        // ignore localStorage errors
       }
+      
+      alert('✅ Tips berhasil disimpan ke database!');
       setShowNewTipModal(false);
       setNewTipTitle('');
       setNewTipCategory('');
       setNewTipContent('');
-    } catch (err) {
-      console.error('Failed to save tip:', err);
-      alert('Gagal menyimpan tip. Cek console untuk detail.');
+      
+      // Reload tips to ensure fresh data
+      await loadTips();
+      window.dispatchEvent(new Event('dataUpdated'));
+    } catch (err: any) {
+      console.error('❌ Failed to save tip:', err);
+      alert(`Gagal menyimpan tip: ${err?.message || 'Unknown error'}`);
     } finally {
       setSavingTip(false);
     }

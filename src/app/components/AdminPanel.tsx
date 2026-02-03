@@ -410,7 +410,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
 
   const loadTips = async () => {
     try {
-      let data;
+      let tips = [];
 
       try {
         // Coba load via Edge Function
@@ -423,16 +423,17 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
 
         if (response.ok) {
           const responseData = await response.json();
-          if (responseData.success) {
-            data = responseData;
+          if (responseData.success && responseData.data) {
+            tips = responseData.data;
+            console.log('✅ [TIPS-Admin] Loaded from edge function:', tips.length);
           } else {
-            throw new Error('Edge Function returned error');
+            throw new Error('Edge Function returned no data');
           }
         } else {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (edgeError) {
-        console.warn('Edge Function failed, trying direct database query:', edgeError);
+        console.warn('⚠️ [TIPS-Admin] Edge Function failed, trying direct database query:', edgeError);
 
         // Fallback: Load langsung dari database
         const { data: tipsData, error } = await supabase
@@ -441,29 +442,32 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Direct database query failed:', error);
+          console.error('❌ [TIPS-Admin] Direct database query failed:', error);
           throw error;
         }
 
-        data = { success: true, data: tipsData };
-        console.log('Direct database query success:', data);
+        tips = tipsData || [];
+        console.log('✅ [TIPS-Admin] Loaded from database:', tips.length);
       }
 
-      if (data.success && data.data) {
-        // For AdminPanel: Show database data first, then localStorage data (for newly added items)
-        const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-        const mergedTips = [...data.data, ...localTips];
-        setTips(mergedTips);
-      } else {
-        // If no database data, show localStorage data
-        const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-        setTips(localTips);
-      }
+      // Set state with DB data (prioritize database over localStorage)
+      setTips(tips);
+      
     } catch (error) {
-      console.error('Error loading tips:', error);
+      console.error('❌ [TIPS-Admin] Error loading tips:', error);
       // Fallback: Load from localStorage only
-      const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-      setTips(localTips);
+      try {
+        const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
+        if (localTips.length > 0) {
+          console.log('⚠️ [TIPS-Admin] Using localStorage fallback:', localTips.length);
+          setTips(localTips);
+        } else {
+          setTips([]);
+        }
+      } catch (e) {
+        console.error('❌ [TIPS-Admin] Failed to parse localStorage:', e);
+        setTips([]);
+      }
     }
   };
 

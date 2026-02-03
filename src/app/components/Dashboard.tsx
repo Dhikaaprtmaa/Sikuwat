@@ -218,49 +218,61 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
           }
         }
       );
-      const data = await response.json();
-      if (data.success && data.data) {
-        tips = data.data;
-      } else {
-        // Fallback: Load directly from database
-        console.warn('Edge Function failed, trying direct database query');
-        const { data: dbTips, error } = await supabase
-          .from('tips')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(4);
-
-        if (!error && dbTips) {
-          tips = dbTips;
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          tips = data.data;
+          console.log('✅ [TIPS] Loaded from edge function:', tips.length);
+        } else {
+          console.warn('⚠️ [TIPS] Edge function returned no data, falling back to direct DB');
+          throw new Error('Edge function returned no data');
         }
+      } else {
+        console.warn('⚠️ [TIPS] Edge function failed with status', response.status);
+        throw new Error(`Edge function returned ${response.status}`);
       }
 
-      // Always merge with localStorage data (local data takes priority for recency)
-      const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-      const mergedTips = [...localTips, ...tips].slice(0, 4);
-      setTips(mergedTips);
+      // Set state with DB data (don't merge with localStorage for tips from DB)
+      setTips(tips.slice(0, 4));
 
     } catch (error) {
-      console.error('Error loading tips:', error);
+      console.warn('⚠️ [TIPS] Edge function error, trying direct database query:', error);
       // Final fallback: Load directly from database
       try {
-        const { data: tips, error } = await supabase
+        const { data: dbTips, error: dbError } = await supabase
           .from('tips')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(4);
 
-        if (!error && tips) {
-          // Merge with localStorage data
-          const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-          const mergedTips = [...localTips, ...tips].slice(0, 4);
-          setTips(mergedTips);
+        if (dbError) {
+          console.error('❌ [TIPS] Database query failed:', dbError);
+          throw dbError;
+        }
+
+        if (dbTips && dbTips.length > 0) {
+          console.log('✅ [TIPS] Loaded from database:', dbTips.length);
+          setTips(dbTips);
+        } else {
+          console.warn('⚠️ [TIPS] No tips found in database');
+          setTips([]);
         }
       } catch (dbError) {
-        console.error('Database fallback failed:', dbError);
+        console.error('❌ [TIPS] Database fallback failed:', dbError);
         // Last resort: just use localStorage data
-        const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
-        setTips(localTips.slice(0, 4));
+        try {
+          const localTips = JSON.parse(localStorage.getItem('tips') || '[]');
+          if (localTips.length > 0) {
+            console.log('⚠️ [TIPS] Using localStorage fallback:', localTips.length);
+            setTips(localTips.slice(0, 4));
+          } else {
+            setTips([]);
+          }
+        } catch (e) {
+          console.error('❌ [TIPS] Failed to parse localStorage:', e);
+          setTips([]);
+        }
       }
     }
   };

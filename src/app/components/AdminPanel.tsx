@@ -903,6 +903,15 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
     }
   };
 
+  // Generate UUID for tips like we do for articles
+  const generateTipId = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
+
   const handleAddTip = async () => {
     if (!tipForm.title || !tipForm.content) {
       toast.error('Title dan content harus diisi');
@@ -911,58 +920,22 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
 
     setLoading(true);
     try {
+      const tipId = generateTipId();
       console.log('💾 [TIP] Saving tip to Supabase...');
       console.log('📝 Data yang dikirim:', {
-        id: `tip_${Date.now()}`,
+        id: tipId,
         title: tipForm.title.trim(),
         content: tipForm.content.trim(),
         category: tipForm.category?.trim() || 'general'
       });
 
-      // Try server-side insertion first (edge function) to ensure service-role insertion
-      const tipId = `tip_${Date.now()}`;
-      try {
-        console.log('💡 [TIP] Attempting server-side insert via edge function');
-        const session = await supabase.auth.getSession();
-        const accessToken = session.data.session?.access_token;
+      // Get current user for created_by field
+      const session = await supabase.auth.getSession();
+      const currentUserId = session.data.session?.user?.id;
+      console.log('👤 Current user ID:', currentUserId);
 
-        if (accessToken) {
-          const fnUrl = `https://${projectId}.supabase.co/functions/v1/make-server-491d5b26/admin/tips`;
-          const resp = await fetch(fnUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({
-              title: tipForm.title.trim(),
-              content: tipForm.content.trim(),
-              category: tipForm.category?.trim() || 'general'
-            })
-          });
-
-          const json = await resp.json();
-          if (resp.ok && json?.success) {
-            console.log('✅ [TIP] Server-side insert succeeded:', json.data || json);
-            // Reload data to show immediately
-            toast.success('✅ Tips berhasil disimpan ke database (server)');
-            setTipForm({ title: '', content: '', category: '' });
-            await loadTips();
-            window.dispatchEvent(new Event('dataUpdated'));
-            setShowTipDialog(false);
-            return;
-          }
-
-          console.warn('⚠️ [TIP] Server-side insert returned non-success:', json);
-        } else {
-          console.warn('⚠️ [TIP] No access token available for server-side insert, falling back to client insert');
-        }
-      } catch (fnErr) {
-        console.error('❌ [TIP] Edge function insert failed, falling back to client insert:', fnErr);
-      }
-
-      // Fallback: Insert langsung ke Supabase dengan ID explisit (client-side)
-      console.log('💾 [TIP] Performing client-side insert as fallback');
+      // Insert langsung ke Supabase dengan UUID (konsisten dengan articles)
+      console.log('💾 [TIP] Performing insert to database');
       const { data: insertedData, error: dbError } = await supabase
         .from('tips')
         .insert({
@@ -970,6 +943,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
           title: tipForm.title.trim(),
           content: tipForm.content.trim(),
           category: tipForm.category?.trim() || 'general',
+          created_by: currentUserId || null,
           created_at: new Date().toISOString()
         })
         .select()
@@ -985,7 +959,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         throw new Error(`[${dbError.code}] ${dbError.message}${dbError.hint ? ' - ' + dbError.hint : ''}`);
       }
 
-      console.log('✅ [TIP] Saved to Supabase (client):', insertedData);
+      console.log('✅ [TIP] Saved to Supabase:', insertedData);
       
       // Success - update UI and trigger reload
       toast.success('✅ Tips berhasil disimpan ke database');
@@ -1006,7 +980,15 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
 
       let errorMessage = 'Terjadi kesalahan saat menyimpan tips';
       if (error?.message) {
-        errorMessage = error.message;
+        if (error.message.includes('duplicate') || error.message.includes('unique')) {
+          errorMessage = 'Tips dengan judul ini sudah ada';
+        } else if (error.message.includes('permission') || error.message.includes('policy')) {
+          errorMessage = 'Anda tidak memiliki izin untuk menyimpan tips';
+        } else if (error.message.includes('network') || error.message.includes('ECONNREFUSED')) {
+          errorMessage = 'Tidak bisa terhubung ke server, periksa internet';
+        } else {
+          errorMessage = error.message;
+        }
       } else if (error?.error_description) {
         errorMessage = error.error_description;
       } else if (typeof error === 'string') {
@@ -1032,7 +1014,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         localStorage.setItem('tips', JSON.stringify(updated));
         setTips((prev: any[]) => [localTip, ...prev]);
         setTipForm({ title: '', content: '', category: '' });
-        toast.success('✅ Tips disimpan secara lokal (offline). Akan disinkronkan saat koneksi tersedia.');
+        toast.success('✅ Tips disimpan secara lokal (offline).');
         window.dispatchEvent(new Event('dataUpdated'));
       } catch (lsErr) {
         console.error('❌ [TIP] Failed to save locally:', lsErr);

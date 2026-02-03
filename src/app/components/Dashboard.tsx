@@ -282,6 +282,15 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
     return role === 'admin';
   };
 
+  // Generate UUID for tips like articles
+  const generateTipId = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
+
   // Save new tip to Supabase and refresh tips
   const saveNewTip = async () => {
     if (!newTipTitle.trim() || !newTipContent.trim()) {
@@ -290,12 +299,18 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
     }
     setSavingTip(true);
     try {
-      const tipId = `tip_${Date.now()}`;
+      const tipId = generateTipId();
+      
+      // Get current user for created_by field
+      const session = await supabase.auth.getSession();
+      const currentUserId = session.data.session?.user?.id;
+      
       const payload: any = {
         id: tipId,
         title: newTipTitle.trim(),
         content: newTipContent.trim(),
         category: newTipCategory.trim() || 'general',
+        created_by: currentUserId || null,
         created_at: new Date().toISOString()
       };
       console.log('💾 [TIP-Dashboard] Saving tip:', payload);

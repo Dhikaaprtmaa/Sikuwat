@@ -1,6 +1,8 @@
 
   # Sikuwat Web App
 
+https://sikuwat.vercel.app/
+
   ## Running the code
 
   Run `npm i` to install the dependencies.

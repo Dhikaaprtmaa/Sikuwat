@@ -520,9 +520,16 @@ app.post("/make-server-491d5b26/admin/tips", async (c) => {
       return c.json({ error: "Unauthorized - Admin access required" }, 401);
     }
 
-    const { title, content, category } = await c.req.json();
-    
+    // Read body and validate
+    const body = await c.req.json();
+    const title = body?.title;
+    const content = body?.content;
+    const category = body?.category;
+
+    console.log('[FUNC] /admin/tips request from admin:', { admin_id: user.id, email: user.email, body });
+
     if (!title || !content) {
+      console.warn('[FUNC] /admin/tips validation failed - title/content missing');
       return c.json({ error: "Title and content are required" }, 400);
     }
 
@@ -535,12 +542,17 @@ app.post("/make-server-491d5b26/admin/tips", async (c) => {
       created_at: new Date().toISOString()
     };
 
-    const result = await sikuwatDb.addTip(tipData);
-
-    return c.json({ 
-      success: true,
-      data: tipData 
-    });
+    try {
+      const result = await sikuwatDb.addTip(tipData);
+      console.log('[FUNC] /admin/tips insert success:', { tip_id: tipData.id, result });
+      return c.json({ 
+        success: true,
+        data: tipData 
+      });
+    } catch (dbErr) {
+      console.error('[FUNC] /admin/tips DB insert error:', dbErr?.message || dbErr, { dbErr });
+      return c.json({ error: 'Database error inserting tip', details: dbErr?.message || null }, 500);
+    }
   } catch (error) {
     console.error("Error adding tip:", error);
     return c.json({ error: "Internal server error" }, 500);

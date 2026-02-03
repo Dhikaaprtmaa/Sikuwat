@@ -919,8 +919,50 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         category: tipForm.category?.trim() || 'general'
       });
 
-      // Insert langsung ke Supabase dengan ID explisit (primary method)
+      // Try server-side insertion first (edge function) to ensure service-role insertion
       const tipId = `tip_${Date.now()}`;
+      try {
+        console.log('💡 [TIP] Attempting server-side insert via edge function');
+        const session = await supabase.auth.getSession();
+        const accessToken = session.data.session?.access_token;
+
+        if (accessToken) {
+          const fnUrl = `https://${projectId}.supabase.co/functions/v1/make-server-491d5b26/admin/tips`;
+          const resp = await fetch(fnUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+              title: tipForm.title.trim(),
+              content: tipForm.content.trim(),
+              category: tipForm.category?.trim() || 'general'
+            })
+          });
+
+          const json = await resp.json();
+          if (resp.ok && json?.success) {
+            console.log('✅ [TIP] Server-side insert succeeded:', json.data || json);
+            // Reload data to show immediately
+            toast.success('✅ Tips berhasil disimpan ke database (server)');
+            setTipForm({ title: '', content: '', category: '' });
+            await loadTips();
+            window.dispatchEvent(new Event('dataUpdated'));
+            setShowTipDialog(false);
+            return;
+          }
+
+          console.warn('⚠️ [TIP] Server-side insert returned non-success:', json);
+        } else {
+          console.warn('⚠️ [TIP] No access token available for server-side insert, falling back to client insert');
+        }
+      } catch (fnErr) {
+        console.error('❌ [TIP] Edge function insert failed, falling back to client insert:', fnErr);
+      }
+
+      // Fallback: Insert langsung ke Supabase dengan ID explisit (client-side)
+      console.log('💾 [TIP] Performing client-side insert as fallback');
       const { data: insertedData, error: dbError } = await supabase
         .from('tips')
         .insert({
@@ -943,7 +985,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         throw new Error(`[${dbError.code}] ${dbError.message}${dbError.hint ? ' - ' + dbError.hint : ''}`);
       }
 
-      console.log('✅ [TIP] Saved to Supabase:', insertedData);
+      console.log('✅ [TIP] Saved to Supabase (client):', insertedData);
       
       // Success - update UI and trigger reload
       toast.success('✅ Tips berhasil disimpan ke database');

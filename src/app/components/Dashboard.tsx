@@ -1252,12 +1252,14 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
               )}
 
               {/* Close Button - Footer */}
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-              >
-                Tutup
-              </button>
+              <div className="flex items-center gap-3 border-t pt-4 mt-6">
+                <button
+                  onClick={() => setSelectedArticle(null)}
+                  className="ml-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
           </Card>
         </div>

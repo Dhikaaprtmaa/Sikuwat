@@ -89,6 +89,10 @@ export default function AiChatWidget({ contextData = { articles: [], tips: [] } 
     return out;
   };
 
+  const handleSuggestedPrompt = (prompt: string) => {
+    setChatInput(prompt);
+  };
+
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
 
@@ -190,12 +194,35 @@ Jika relevan, sertakan langkah-langkah, takaran, diagnosis masalah, penyebab umu
           </div>
           <div className="h-80 overflow-y-auto p-4 bg-gradient-to-br from-gray-50 to-emerald-50/30 space-y-3">
             {chatMessages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="h-8 w-8 text-white" />
+              <div className="space-y-4">
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle className="h-8 w-8 text-white" />
+                  </div>
+                  <p className="text-sm text-gray-700 font-medium mb-1">Halo! Saya Sikuwat AI 🌾</p>
+                  <p className="text-xs text-gray-600 mb-4">Tanyakan apapun tentang pertanian!</p>
                 </div>
-                <p className="text-sm text-gray-700 font-medium mb-2">Halo! Saya Sikuwat AI 🌾</p>
-                <p className="text-xs text-gray-600">Tanyakan apapun tentang pertanian!</p>
+                
+                {/* Suggested Prompts */}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-gray-600 px-2">Contoh pertanyaan:</p>
+                  {[
+                    'Cara budidaya padi yang baik?',
+                    'Bagaimana mengatasi hama cabai?',
+                    'Berapa dosis pupuk untuk jagung?',
+                    'Teknik irigasi yang efisien?',
+                    'Tips meningkatkan hasil panen?',
+                    'Harga pasar sayuran hari ini?'
+                  ].map((prompt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSuggestedPrompt(prompt)}
+                      className="w-full text-left text-xs p-2 rounded-lg bg-white border border-emerald-100 text-gray-700 hover:bg-emerald-50 hover:border-emerald-300 transition-colors shadow-sm"
+                    >
+                      💡 {prompt}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {chatMessages.map((msg, idx) => (

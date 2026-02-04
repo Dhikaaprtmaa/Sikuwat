@@ -1204,15 +1204,15 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
       {/* Article Detail Modal */}
       {selectedArticle && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedArticle(null)}>
-          <Card className="w-full max-w-2xl my-auto mx-auto" onClick={(e) => e.stopPropagation()}>
+          <Card className="w-full max-w-2xl my-auto mx-auto relative" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button - Positioned at top right of card */}
+            <button
+              onClick={() => setSelectedArticle(null)}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-50 bg-white rounded-full"
+            >
+              <X className="h-6 w-6" />
+            </button>
             <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="sticky top-4 right-4 float-right text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-10"
-              >
-                <X className="h-6 w-6" />
-              </button>
 
               {/* Article Image */}
               {selectedArticle.image_url && (
@@ -1273,7 +1273,15 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
       {/* Tip Detail Modal */}
       {selectedTip && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedTip(null)}>
-          <Card className="w-full max-w-3xl my-auto mx-auto" onClick={(e) => e.stopPropagation()}>
+          <Card className="w-full max-w-3xl my-auto mx-auto relative" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button - Positioned at top right of card */}
+            <button
+              onClick={() => setSelectedTip(null)}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-50 bg-white rounded-full"
+              title="Tutup"
+            >
+              <X className="h-6 w-6" />
+            </button>
             <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
@@ -1295,9 +1303,6 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                       </button>
                       <button onClick={() => toggleBookmark(selectedTip.id)} className={`p-2 rounded-md ${isBookmarked(selectedTip.id) ? 'text-amber-600' : 'text-gray-600'}`} title="Simpan">
                         <Sparkles className="h-5 w-5" />
-                      </button>
-                      <button onClick={() => setSelectedTip(null)} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors" title="Tutup">
-                        <X className="h-6 w-6" />
                       </button>
                     </div>
                   </div>

@@ -536,6 +536,42 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
     }
   };
 
+  // Render a small badge with an icon and colored background — deterministic by key
+  const renderIconBadge = (key: string, kind: 'commodity' | 'tip') => {
+    const variants = [
+      { bg: 'bg-emerald-50 text-emerald-600' },
+      { bg: 'bg-teal-50 text-teal-600' },
+      { bg: 'bg-cyan-50 text-cyan-600' },
+      { bg: 'bg-amber-50 text-amber-600' },
+      { bg: 'bg-lime-50 text-lime-600' }
+    ];
+
+    // simple stable hash
+    let h = 0;
+    for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+    const v = variants[h % variants.length];
+
+    // choose icon by keywords
+    const k = key.toLowerCase();
+    let Icon = Leaf;
+    if (kind === 'commodity') {
+      if (k.includes('sawi') || k.includes('bayam') || k.includes('sayur') ) Icon = Leaf;
+      else if (k.includes('tomat') || k.includes('cabai') || k.includes('buah')) Icon = Sparkles;
+      else if (k.includes('padi') || k.includes('beras')) Icon = TrendingUp;
+      else Icon = Leaf;
+    } else {
+      if (k.includes('pupuk') || k.includes('organik')) Icon = Lightbulb;
+      else if (k.includes('hama') || k.includes('pestisida')) Icon = Wrench;
+      else Icon = Leaf;
+    }
+
+    return (
+      <div className={`${v.bg} w-10 h-10 rounded-lg flex items-center justify-center`}>
+        <Icon className="h-5 w-5" />
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
       {/* Animated Background Elements */}
@@ -938,9 +974,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                 >
                   <Card className="p-4 text-left hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer border bg-white/90">
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
-                        {getTipIcon(tip.category)}
-                      </div>
+                        {renderIconBadge(tip.category, 'tip')}
                       <div className="flex-1">
                         <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">{tip.title}</h4>
                         <p className="text-xs text-gray-600 mb-2 line-clamp-2">{tip.content || tip.description || ''}</p>
@@ -989,9 +1023,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     <Card className="relative p-4 border bg-white/90 hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-                            <Leaf className="h-5 w-5" />
-                          </div>
+                          {renderIconBadge(price.commodity, 'commodity')}
                           <div>
                             <h4 className="font-semibold text-sm text-gray-900">{price.commodity}</h4>
                             <div className="text-xs text-gray-500">/{price.unit}</div>
@@ -1087,9 +1119,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     >
                       <Card className="p-4 border bg-white/95 hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer h-full">
                         <div className="flex items-start gap-4">
-                          <div className="w-16 h-16 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
-                            {getTipIcon(tip.category)}
-                          </div>
+                          {renderIconBadge(tip.category, 'tip')}
                           <div className="flex-1 text-left">
                             <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">{tip.title}</h4>
                             <p className="text-sm text-gray-600 mb-2 line-clamp-3">{tip.content || tip.description}</p>

@@ -1205,14 +1205,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
       {selectedArticle && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedArticle(null)}>
           <Card className="w-full max-w-2xl my-auto mx-auto relative" onClick={(e) => e.stopPropagation()}>
-            {/* Close Button - Positioned at top right of card */}
-            <button
-              onClick={() => setSelectedArticle(null)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-50 bg-white rounded-full"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto flex flex-col">
 
               {/* Article Image */}
               {selectedArticle.image_url && (
@@ -1261,7 +1254,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
               {/* Close Button - Footer */}
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="w-full mt-4 text-center text-gray-600 hover:text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors"
+                className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
               >
                 Tutup
               </button>
@@ -1274,15 +1267,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
       {selectedTip && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedTip(null)}>
           <Card className="w-full max-w-3xl my-auto mx-auto relative" onClick={(e) => e.stopPropagation()}>
-            {/* Close Button - Positioned at top right of card */}
-            <button
-              onClick={() => setSelectedTip(null)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-50 bg-white rounded-full"
-              title="Tutup"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto flex flex-col">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   {renderIconBadge(selectedTip.category || selectedTip.title || 'tip', 'tip')}
@@ -1311,7 +1296,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     {selectedTip.content || selectedTip.description || 'Tidak ada detail tersedia.'}
                   </div>
 
-                  <div className="mt-6 flex items-center gap-3 border-t pt-4">
+                  <div className="mt-6 flex items-center gap-3 border-t pt-4 flex-wrap">
                     {selectedTip.source && (
                       <a href={selectedTip.source} target="_blank" rel="noopener noreferrer" className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors">
                         Buka Sumber
@@ -1319,6 +1304,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     )}
                     <button onClick={() => { copyTipLink(selectedTip.id); }} className="bg-white border border-gray-200 text-gray-800 py-2 px-3 rounded-md text-sm">Salin Link</button>
                     <button onClick={() => { toggleBookmark(selectedTip.id); }} className={`py-2 px-3 rounded-md text-sm ${isBookmarked(selectedTip.id) ? 'bg-amber-50 text-amber-700' : 'bg-gray-50 text-gray-700'}`}>{isBookmarked(selectedTip.id) ? 'Tersimpan' : 'Simpan'}</button>
+                    <button onClick={() => setSelectedTip(null)} className="ml-auto bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">Tutup</button>
                   </div>
                 </div>
               </div>

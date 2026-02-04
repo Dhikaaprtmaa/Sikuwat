@@ -936,17 +936,17 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   style={{ animationDelay: `${idx * 100}ms` }}
                   onClick={() => setSelectedTip(tip)}
                 >
-                  <Card className="p-4 sm:p-6 text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-0 bg-gradient-to-br from-white to-emerald-50/30 h-full">
-                    <div className="relative inline-block mb-3 sm:mb-4">
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center text-white transform group-hover:scale-110 transition-transform duration-300">
+                  <Card className="p-4 text-left hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer border bg-white/90">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
                         {getTipIcon(tip.category)}
                       </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">{tip.title}</h4>
+                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{tip.content || tip.description || ''}</p>
+                        <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs rounded-md font-medium">{tip.category}</span>
+                      </div>
                     </div>
-                    <h4 className="font-bold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-2">{tip.title}</h4>
-                    <span className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">
-                      {tip.category}
-                    </span>
                   </Card>
                 </div>
               ))
@@ -986,23 +986,21 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     className="group relative"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300 opacity-20"></div>
-                    <Card className="relative p-6 backdrop-blur-sm bg-white/90 border-emerald-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center">
-                          <Leaf className="h-6 w-6 text-white" />
+                    <Card className="relative p-4 border bg-white/90 hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+                            <Leaf className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-sm text-gray-900">{price.commodity}</h4>
+                            <div className="text-xs text-gray-500">/{price.unit}</div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 text-emerald-600">
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="text-xs font-medium">Live</span>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-gray-900">{formatPrice(price.price)}</div>
+                          <div className="text-xs text-emerald-600">Live</div>
                         </div>
-                      </div>
-                      <h4 className="font-bold text-lg text-gray-800 mb-2">{price.commodity}</h4>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                          {formatPrice(price.price)}
-                        </span>
-                        <span className="text-sm text-gray-600">/{price.unit}</span>
                       </div>
                     </Card>
                   </div>
@@ -1087,20 +1085,22 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                       style={{ animationDelay: `${idx * 100}ms` }}
                       onClick={() => setSelectedTip(tip)}
                     >
-                      <Card className="p-6 text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-0 bg-gradient-to-br from-white to-emerald-50/30 h-full">
-                      <div className="relative inline-block mb-4">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                        <div className="relative w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center text-white transform group-hover:scale-110 transition-transform duration-300">
-                          {getTipIcon(tip.category)}
+                      <Card className="p-4 border bg-white/95 hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer h-full">
+                        <div className="flex items-start gap-4">
+                          <div className="w-16 h-16 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                            {getTipIcon(tip.category)}
+                          </div>
+                          <div className="flex-1 text-left">
+                            <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">{tip.title}</h4>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-3">{tip.content || tip.description}</p>
+                            <div className="flex items-center justify-between">
+                              <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs rounded-md font-medium">{tip.category}</span>
+                              <div className="text-xs text-gray-400">{new Date(tip.created_at || '').toLocaleDateString()}</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <h4 className="font-bold text-gray-900 mb-2">{tip.title}</h4>
-                      <p className="text-sm text-gray-600 mb-3">{tip.description}</p>
-                      <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">
-                        {tip.category}
-                      </span>
-                    </Card>
-                  </div>
+                      </Card>
+                    </div>
                 ))
               )}
             </div>

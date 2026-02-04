@@ -1272,8 +1272,8 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
 
       {/* Tip Detail Modal */}
       {selectedTip && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <Card className="w-full max-w-3xl my-auto mx-auto">
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onClick={() => setSelectedTip(null)}>
+          <Card className="w-full max-w-3xl my-auto mx-auto" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 sm:p-6 relative">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
@@ -1302,14 +1302,8 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     </div>
                   </div>
 
-                  <div className="mt-4 prose prose-sm max-w-none text-gray-700 leading-relaxed">
-                    {selectedTip.content && selectedTip.content.split('\n').length > 1 ? (
-                      <ol className="list-decimal list-inside space-y-2">
-                        {selectedTip.content.split('\n').map((line: string, i: number) => (<li key={i}>{line}</li>))}
-                      </ol>
-                    ) : (
-                      <p className="whitespace-pre-wrap">{selectedTip.content || selectedTip.description || 'Tidak ada detail tersedia.'}</p>
-                    )}
+                  <div className="mt-4 text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    {selectedTip.content || selectedTip.description || 'Tidak ada detail tersedia.'}
                   </div>
 
                   <div className="mt-6 flex items-center gap-3 border-t pt-4">

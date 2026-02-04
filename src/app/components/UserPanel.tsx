@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/app/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import AiChatWidget from '@/app/components/AiChatWidget';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
@@ -1933,6 +1934,9 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
           animation-delay: 4s;
         }
       `}</style>
+
+      {/* AI Chat Widget */}
+      <AiChatWidget contextData={{ articles: [], tips: [] }} />
     </div>
   );
 }

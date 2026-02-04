@@ -16,7 +16,6 @@ export default function AiChatWidget({ contextData = { articles: [], tips: [] } 
   const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai'; message: string }[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const [chatDetailed, setChatDetailed] = useState(true);
 
   const generateLocalAnswer = (userMessage: string, ctxArticles: any[], ctxTips: any[], detail: boolean) => {
     const kws = (userMessage || '')
@@ -85,7 +84,6 @@ export default function AiChatWidget({ contextData = { articles: [], tips: [] } 
       out += 'Jawaban singkat: sesuaikan pemupukan dan pengendalian hama sesuai panduan di atas.';
     }
 
-    out += '\n\nKeterangan: jawaban dihasilkan dari data lokal (artikel & tips). Untuk jawaban yang lebih komprehensif, tolong aktifkan layanan AI (konfigurasi API pada server).';
     return out;
   };
 
@@ -115,7 +113,7 @@ Jika relevan, sertakan langkah-langkah, takaran, diagnosis masalah, penyebab umu
       const ctxArticles = contextData.articles.slice(0, 6).map(a => ({ id: a.id, title: a.title, summary: (a.content || '').slice(0, 300), url: a.url || a.article_url }));
       const ctxTips = contextData.tips.slice(0, 10).map(t => ({ id: t.id, title: t.title, content: t.content, category: t.category }));
 
-      const response = await fetch(
+            const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/gemini-chat`,
         {
           method: 'POST',
@@ -127,7 +125,7 @@ Jika relevan, sertakan langkah-langkah, takaran, diagnosis masalah, penyebab umu
             message: userMessage,
             systemPrompt,
             context: { articles: ctxArticles, tips: ctxTips },
-            detail: chatDetailed ? 'detailed' : 'concise'
+                  detail: 'detailed'
           })
         }
       );
@@ -144,7 +142,7 @@ Jika relevan, sertakan langkah-langkah, takaran, diagnosis masalah, penyebab umu
       try {
         const ctxArticles = contextData.articles.slice(0, 6).map(a => ({ id: a.id, title: a.title, summary: (a.content || '').slice(0, 300), url: a.url || a.article_url }));
         const ctxTips = contextData.tips.slice(0, 10).map(t => ({ id: t.id, title: t.title, content: t.content, category: t.category }));
-        const localAnswer = generateLocalAnswer(userMessage, ctxArticles, ctxTips, chatDetailed);
+        const localAnswer = generateLocalAnswer(userMessage, ctxArticles, ctxTips, true);
         setChatMessages(prev => [...prev, { role: 'ai', message: localAnswer }]);
       } catch (fallbackErr) {
         console.error('Fallback answer failed:', fallbackErr);
@@ -254,10 +252,6 @@ Jika relevan, sertakan langkah-langkah, takaran, diagnosis masalah, penyebab umu
             )}
           </div>
           <div className="p-4 bg-white border-t border-gray-100 flex gap-2 flex-col">
-            <div className="flex items-center text-sm gap-2">
-              <input type="checkbox" checked={chatDetailed} onChange={(e) => setChatDetailed(e.target.checked)} className="h-4 w-4" />
-              <span className="text-xs text-gray-600">Jawaban detail</span>
-            </div>
             <div className="flex gap-2">
               <Input
                 placeholder="Tanya tentang pertanian..."

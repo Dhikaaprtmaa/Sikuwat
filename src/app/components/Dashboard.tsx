@@ -1203,13 +1203,13 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
 
       {/* Article Detail Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-          <Card className="w-full max-w-2xl my-auto mx-auto">
-            <div className="p-4 sm:p-6 relative">
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedArticle(null)}>
+          <Card className="w-full max-w-2xl my-auto mx-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
               {/* Close Button */}
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+                className="sticky top-4 right-4 float-right text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors z-10"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1261,7 +1261,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
               {/* Close Button - Footer */}
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors"
+                className="w-full mt-4 text-center text-gray-600 hover:text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors"
               >
                 Tutup
               </button>
@@ -1272,9 +1272,9 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
 
       {/* Tip Detail Modal */}
       {selectedTip && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onClick={() => setSelectedTip(null)}>
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setSelectedTip(null)}>
           <Card className="w-full max-w-3xl my-auto mx-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-4 sm:p-6 relative">
+            <div className="p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   {renderIconBadge(selectedTip.category || selectedTip.title || 'tip', 'tip')}

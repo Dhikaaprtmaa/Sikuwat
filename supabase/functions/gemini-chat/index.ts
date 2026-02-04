@@ -107,7 +107,7 @@ serve(async (req) => {
 
     // Call Google Generative Language API (Gemini / text-bison)
     // NOTE: Configure GOOGLE_API_KEY in your Supabase Function environment variables.
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const resp = await fetch(endpoint, {
       method: 'POST',
@@ -115,9 +115,15 @@ serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        prompt: { text: finalPrompt },
-        temperature: 0.2,
-        maxOutputTokens: 800
+        contents: [{
+          parts: [{
+            text: finalPrompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 800
+        }
       })
     });
 
@@ -128,7 +134,7 @@ serve(async (req) => {
 
     const data = await resp.json();
     // Try common response shapes
-    const candidate = data?.candidates?.[0]?.output || data?.candidates?.[0]?.content || data?.outputText || JSON.stringify(data);
+    const candidate = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.candidates?.[0]?.output || data?.candidates?.[0]?.content || data?.outputText || JSON.stringify(data);
 
     return new Response(JSON.stringify({ success: true, response: candidate }), {
       headers: { 'Content-Type': 'application/json' }

@@ -859,14 +859,12 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
           <>
         {/* Harga Pasar Section */}
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="flex items-center justify-between mb-6 sm:mb-8 gap-2">
+          <div className="flex items-center gap-3 mb-6">
+            <TrendingUp className="h-8 w-8 text-emerald-600" />
             <div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                Harga Pasar Terkini
-              </h3>
-              <p className="text-xs sm:text-sm md:text-base text-gray-600">Update harga komoditas pertanian hari ini</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-800">Harga Pasar Terkini</h3>
+              <p className="text-sm text-gray-600">Update harga komoditas pertanian hari ini</p>
             </div>
-            <TrendingUp className="h-10 w-10 text-emerald-500" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {marketPrices.length === 0 ? (
@@ -881,23 +879,19 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   className="group relative"
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300 opacity-20"></div>
-                  <Card className="relative p-6 backdrop-blur-sm bg-white/95 border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                        <Leaf className="h-6 w-6 text-white" />
+                  <Card className="relative p-4 border bg-white/90 shadow-sm hover:shadow-lg transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {renderIconBadge(price.commodity, 'commodity')}
+                        <div>
+                          <h4 className="font-semibold text-sm text-gray-900">{price.commodity}</h4>
+                          <div className="text-xs text-gray-500">/{price.unit}</div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-emerald-600">
-                        <TrendingUp className="h-4 w-4" />
-                        <span className="text-xs font-medium">Live</span>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-gray-900">{formatPrice(price.price)}</div>
+                        <div className="text-xs text-emerald-600">Live</div>
                       </div>
-                    </div>
-                    <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-800 mb-2">{price.commodity}</h4>
-                    <div className="flex items-baseline gap-1 sm:gap-2">
-                      <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                        {formatPrice(price.price)}
-                      </span>
-                      <span className="text-xs sm:text-sm text-gray-600">/{price.unit}</span>
                     </div>
                   </Card>
                 </div>
@@ -1302,7 +1296,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                       <button onClick={() => toggleBookmark(selectedTip.id)} className={`p-2 rounded-md ${isBookmarked(selectedTip.id) ? 'text-amber-600' : 'text-gray-600'}`} title="Simpan">
                         <Sparkles className="h-5 w-5" />
                       </button>
-                      <button onClick={() => setSelectedTip(null)} className="text-gray-400 hover:text-gray-600 p-2 rounded-md">
+                      <button onClick={() => setSelectedTip(null)} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors" title="Tutup">
                         <X className="h-6 w-6" />
                       </button>
                     </div>

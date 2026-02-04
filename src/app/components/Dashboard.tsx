@@ -882,9 +882,9 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300 opacity-20"></div>
-                  <Card className="relative p-6 backdrop-blur-sm bg-white/90 border-emerald-100 ring-1 ring-emerald-50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <Card className="relative p-6 backdrop-blur-sm bg-white/95 border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
                         <Leaf className="h-6 w-6 text-white" />
                       </div>
                       <div className="flex items-center gap-1 text-emerald-600">
@@ -942,12 +942,12 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   onClick={() => setSelectedArticle(article)}
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full border-0 bg-white">
+                  <Card className="overflow-hidden hover:shadow-2xl shadow-md transition-all duration-500 hover:-translate-y-2 h-full border-0 bg-white">
                     <div className="relative h-48 overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-500">
                       <ImageWithFallback
                         src={article.image_url && article.image_url.length > 0 ? article.image_url : "https://images.unsplash.com/photo-1638261583636-29872e94bcd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600"}
                         alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                       <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-emerald-600">

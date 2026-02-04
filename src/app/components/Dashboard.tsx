@@ -122,6 +122,47 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
     }
   };
 
+  const formatDate = (d?: string | null) => {
+    try {
+      if (!d) return '';
+      const dt = new Date(d);
+      return dt.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch (e) { return d || ''; }
+  };
+
+  const copyTipLink = async (id: string) => {
+    try {
+      const url = `${window.location.origin}${window.location.pathname}?tip=${id}`;
+      await navigator.clipboard.writeText(url);
+      alert('Link tip disalin ke clipboard');
+    } catch (e) {
+      console.warn('Copy failed', e);
+      alert('Gagal menyalin link');
+    }
+  };
+
+  const toggleBookmark = (id: string) => {
+    try {
+      const raw = localStorage.getItem('sikuwat_bookmarks') || '[]';
+      const arr: string[] = JSON.parse(raw);
+      const idx = arr.indexOf(id);
+      if (idx === -1) arr.push(id); else arr.splice(idx, 1);
+      localStorage.setItem('sikuwat_bookmarks', JSON.stringify(arr));
+      // force re-render by updating selectedTip (immutable)
+      setSelectedTip(prev => prev ? { ...prev } : prev);
+    } catch (e) {
+      console.warn('bookmark error', e);
+    }
+  };
+
+  const isBookmarked = (id: string) => {
+    try {
+      const raw = localStorage.getItem('sikuwat_bookmarks') || '[]';
+      const arr: string[] = JSON.parse(raw);
+      return arr.indexOf(id) !== -1;
+    } catch (e) { return false; }
+  };
+
   const loadArticles = async () => {
     try {
       let articles = [];
@@ -1237,52 +1278,57 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
 
       {/* Tip Detail Modal */}
       {selectedTip && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-          <Card className="w-full max-w-xl my-auto mx-auto">
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <Card className="w-full max-w-3xl my-auto mx-auto">
             <div className="p-4 sm:p-6 relative">
-              <button
-                onClick={() => setSelectedTip(null)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
-              >
-                <X className="h-6 w-6" />
-              </button>
-
-              <div className="mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium">
-                    {selectedTip.category}
-                  </span>
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  {renderIconBadge(selectedTip.category || selectedTip.title || 'tip', 'tip')}
                 </div>
-                <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2">
-                  {selectedTip.title}
-                </h2>
-              </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium">{selectedTip.category}</span>
+                        <span className="text-xs text-gray-400">{selectedTip.source ? 'Sumber terverifikasi' : ''}</span>
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{selectedTip.title}</h2>
+                      <div className="text-xs text-gray-500">{selectedTip.author ? selectedTip.author + ' • ' : ''}{formatDate(selectedTip.created_at)}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => copyTipLink(selectedTip.id)} className="text-gray-600 hover:text-gray-800 p-2 rounded-md" title="Salin link">
+                        <ArrowRight className="h-5 w-5 transform rotate-45" />
+                      </button>
+                      <button onClick={() => toggleBookmark(selectedTip.id)} className={`p-2 rounded-md ${isBookmarked(selectedTip.id) ? 'text-amber-600' : 'text-gray-600'}`} title="Simpan">
+                        <Sparkles className="h-5 w-5" />
+                      </button>
+                      <button onClick={() => setSelectedTip(null)} className="text-gray-400 hover:text-gray-600 p-2 rounded-md">
+                        <X className="h-6 w-6" />
+                      </button>
+                    </div>
+                  </div>
 
-              <div className="prose prose-sm max-w-none mb-6">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedTip.content || selectedTip.description || 'Tidak ada detail tersedia.'}
-                </p>
-              </div>
+                  <div className="mt-4 prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                    {selectedTip.content && selectedTip.content.split('\n').length > 1 ? (
+                      <ol className="list-decimal list-inside space-y-2">
+                        {selectedTip.content.split('\n').map((line: string, i: number) => (<li key={i}>{line}</li>))}
+                      </ol>
+                    ) : (
+                      <p className="whitespace-pre-wrap">{selectedTip.content || selectedTip.description || 'Tidak ada detail tersedia.'}</p>
+                    )}
+                  </div>
 
-              <div className="flex items-center gap-3 pt-4 border-t mb-4">
-                {selectedTip.source && (
-                  <a
-                    href={selectedTip.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors"
-                  >
-                    Sumber →
-                  </a>
-                )}
+                  <div className="mt-6 flex items-center gap-3 border-t pt-4">
+                    {selectedTip.source && (
+                      <a href={selectedTip.source} target="_blank" rel="noopener noreferrer" className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors">
+                        Buka Sumber
+                      </a>
+                    )}
+                    <button onClick={() => { copyTipLink(selectedTip.id); }} className="bg-white border border-gray-200 text-gray-800 py-2 px-3 rounded-md text-sm">Salin Link</button>
+                    <button onClick={() => { toggleBookmark(selectedTip.id); }} className={`py-2 px-3 rounded-md text-sm ${isBookmarked(selectedTip.id) ? 'bg-amber-50 text-amber-700' : 'bg-gray-50 text-gray-700'}`}>{isBookmarked(selectedTip.id) ? 'Tersimpan' : 'Simpan'}</button>
+                  </div>
+                </div>
               </div>
-
-              <button
-                onClick={() => setSelectedTip(null)}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors"
-              >
-                Tutup
-              </button>
             </div>
           </Card>
         </div>

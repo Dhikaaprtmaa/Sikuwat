@@ -108,7 +108,7 @@ serve(async (req) => {
     }
     parts.push('User question:');
     parts.push(message);
-    if (detail === 'detailed') parts.push('Please answer in a detailed, step-by-step, practical manner in Indonesian.');
+    if (detail === 'detailed') parts.push('');
 
     const finalPrompt = parts.join('\n\n');
 

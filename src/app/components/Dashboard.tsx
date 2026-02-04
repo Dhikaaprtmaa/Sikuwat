@@ -841,7 +841,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300 opacity-20"></div>
-                  <Card className="relative p-6 backdrop-blur-sm bg-white/90 border-emerald-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <Card className="relative p-6 backdrop-blur-sm bg-white/90 border-emerald-100 ring-1 ring-emerald-50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center">
                         <Leaf className="h-6 w-6 text-white" />
@@ -972,7 +972,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                   style={{ animationDelay: `${idx * 100}ms` }}
                   onClick={() => setSelectedTip(tip)}
                 >
-                  <Card className="p-4 text-left hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer border bg-white/90">
+                  <Card className="p-4 text-left ring-1 ring-emerald-50 hover:shadow-lg transition-transform duration-200 hover:-translate-y-1 cursor-pointer border bg-white/90">
                     <div className="flex items-start gap-3">
                         {renderIconBadge(tip.category, 'tip')}
                       <div className="flex-1">
@@ -1020,7 +1020,7 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
                     className="group relative"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
-                    <Card className="relative p-4 border bg-white/90 hover:shadow-md transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                    <Card className="relative p-4 border bg-white/90 ring-1 ring-emerald-50 hover:shadow-lg transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           {renderIconBadge(price.commodity, 'commodity')}

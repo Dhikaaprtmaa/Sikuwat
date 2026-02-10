@@ -1180,24 +1180,24 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
           </CardHeader>
           <CardContent className="p-6 md:p-8">
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'dashboard' | 'input-tanam' | 'input-panen' | 'reports')} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-xl p-1 mb-6">
-                <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
-                  <BarChart3 className="h-4 w-4" />
-                  Dashboard
-                </TabsTrigger>
-                <TabsTrigger value="input-tanam" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
-                  <Sprout className="h-4 w-4" />
-                  Input Tanam
-                </TabsTrigger>
-                <TabsTrigger value="input-panen" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
-                  <Wheat className="h-4 w-4" />
-                  Input Panen
-                </TabsTrigger>
-                <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
-                  <BookOpen className="h-4 w-4" />
-                  Laporan
-                </TabsTrigger>
-              </TabsList>
+              <TabsList className="flex w-full gap-2 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-xl p-1 mb-6 overflow-x-auto">
+                  <TabsTrigger value="dashboard" className="whitespace-nowrap flex-shrink-0 px-3 py-2 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                    <BarChart3 className="h-4 w-4" />
+                    Dashboard
+                  </TabsTrigger>
+                  <TabsTrigger value="input-tanam" className="whitespace-nowrap flex-shrink-0 px-3 py-2 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                    <Sprout className="h-4 w-4" />
+                    Input Tanam
+                  </TabsTrigger>
+                  <TabsTrigger value="input-panen" className="whitespace-nowrap flex-shrink-0 px-3 py-2 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                    <Wheat className="h-4 w-4" />
+                    Input Panen
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" className="whitespace-nowrap flex-shrink-0 px-3 py-2 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                    <BookOpen className="h-4 w-4" />
+                    Laporan
+                  </TabsTrigger>
+                </TabsList>
 
               <TabsContent value="dashboard" className="space-y-6 mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

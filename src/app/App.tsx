@@ -6,8 +6,6 @@ import Dashboard from '@/app/components/Dashboard';
 import AdminPanel from '@/app/components/AdminPanel';
 import UserPanel from '@/app/components/UserPanel';
 import LoginDialog from '@/app/components/LoginDialog';
-import Chatbox from '@/app/components/Chatbox';
-import { Routes, Route } from 'react-router-dom';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -211,7 +209,6 @@ export default function App() {
     return (
       <>
         <AdminPanel user={user} onLogout={handleLogout} />
-        <Chatbox />
         <Toaster position="top-right" richColors />
       </>
     );
@@ -220,10 +217,7 @@ export default function App() {
   if (user && role === 'user') {
     return (
       <>
-        <Routes>
-          <Route path="/*" element={<UserPanel user={user} onLogout={handleLogout} />} />
-        </Routes>
-        <Chatbox />
+        <UserPanel user={user} onLogout={handleLogout} />
         <Toaster position="top-right" richColors />
       </>
     );

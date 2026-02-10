@@ -9,7 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 
 import { toast } from 'sonner';
-import AiChatWidget from '@/app/components/AiChatWidget';
 import InputTanam from '@/app/components/InputTanam';
 import InputPanen from '@/app/components/InputPanen';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
@@ -1543,11 +1542,11 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
               </TabsContent>
 
               <TabsContent value="input-tanam" className="space-y-6 mt-6">
-                <InputTanam user={user} onBack={() => setActiveTab('dashboard')} />
+                <InputTanam user={user} />
               </TabsContent>
 
               <TabsContent value="input-panen" className="space-y-6 mt-6">
-                <InputPanen user={user} onBack={() => setActiveTab('dashboard')} />
+                <InputPanen user={user} />
               </TabsContent>
 
               <TabsContent value="reports" className="space-y-6 mt-6">
@@ -1947,9 +1946,6 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
           animation-delay: 4s;
         }
       `}</style>
-
-      {/* AI Chat Widget */}
-      <AiChatWidget contextData={{ articles: [], tips: [] }} />
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { CalendarIcon, ArrowLeft } from 'lucide-react';
+import { CalendarIcon, Sprout } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
 import { toast } from 'sonner';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
@@ -11,10 +12,9 @@ const supabase = createClient(`https://${projectId}.supabase.co`, publicAnonKey)
 
 interface Props {
   user: any;
-  onBack: () => void;
 }
 
-export default function InputTanam({ user, onBack }: Props) {
+export default function InputTanam({ user }: Props) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
 
@@ -53,45 +53,85 @@ export default function InputTanam({ user, onBack }: Props) {
   };
 
   return (
-    <div>
-      <div className="mb-6 flex items-center gap-3">
-        <Button variant="ghost" onClick={onBack} className="px-3"><ArrowLeft className="h-4 w-4 mr-2" />Kembali</Button>
-        <h2 className="text-2xl font-bold">Input Tanam</h2>
-      </div>
-
-      <div className="space-y-4 max-w-2xl">
-          <div>
-            <Label htmlFor="seedType">Jenis Bibit (Cabai, Tomat, Sawi)</Label>
-            <Input id="seedType" placeholder="Contoh: Cabai Merah" value={form.seedType} onChange={(e) => setForm({ ...form, seedType: e.target.value })} className="mt-1" />
-          </div>
-
-          <div>
-            <Label htmlFor="plantingDate">Tanggal Tanam</Label>
-            <div className="relative mt-1">
-              <Input id="plantingDate" type="date" value={form.plantingDate} onChange={(e) => setForm({ ...form, plantingDate: e.target.value })} className="pr-10" />
-              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+    <div className="space-y-6">
+      <Card className="border-emerald-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-200">
+          <div className="flex items-center gap-3">
+            <div className="bg-emerald-600 p-2 rounded-lg">
+              <Sprout className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl md:text-3xl text-emerald-900">Input Penanaman</CardTitle>
+              <CardDescription>Masukkan data bibit yang akan Anda tanam</CardDescription>
             </div>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-5 max-w-3xl">
             <div>
-              <Label htmlFor="seedCount">Jumlah Bibit</Label>
-              <Input id="seedCount" type="number" placeholder="150" value={form.seedCount} onChange={(e) => setForm({ ...form, seedCount: e.target.value })} className="mt-1" />
+              <Label htmlFor="seedType" className="text-base font-semibold text-gray-700">Jenis Bibit</Label>
+              <p className="text-sm text-gray-500 mb-2">Contoh: Cabai Merah, Tomat, Sawi</p>
+              <Input 
+                id="seedType" 
+                placeholder="Masukkan jenis bibit..." 
+                value={form.seedType} 
+                onChange={(e) => setForm({ ...form, seedType: e.target.value })} 
+                className="mt-1 h-10 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" 
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <Label htmlFor="plantingDate" className="text-base font-semibold text-gray-700">Tanggal Tanam</Label>
+                <div className="relative mt-2">
+                  <Input 
+                    id="plantingDate" 
+                    type="date" 
+                    value={form.plantingDate} 
+                    onChange={(e) => setForm({ ...form, plantingDate: e.target.value })} 
+                    className="pr-10 h-10 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" 
+                  />
+                  <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="seedCount" className="text-base font-semibold text-gray-700">Jumlah Bibit</Label>
+                <Input 
+                  id="seedCount" 
+                  type="number" 
+                  placeholder="Contoh: 150" 
+                  value={form.seedCount} 
+                  onChange={(e) => setForm({ ...form, seedCount: e.target.value })} 
+                  className="mt-2 h-10 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" 
+                />
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="harvestDateTarget">Target Tanggal Panen (Opsional)</Label>
-              <div className="relative mt-1">
-                <Input id="harvestDateTarget" type="date" value={form.harvestDate} onChange={(e) => setForm({ ...form, harvestDate: e.target.value })} className="pr-10" />
+              <Label htmlFor="harvestDateTarget" className="text-base font-semibold text-gray-700">Target Tanggal Panen <span className="text-gray-400">(Opsional)</span></Label>
+              <div className="relative mt-2">
+                <Input 
+                  id="harvestDateTarget" 
+                  type="date" 
+                  value={form.harvestDate} 
+                  onChange={(e) => setForm({ ...form, harvestDate: e.target.value })} 
+                  className="pr-10 h-10 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" 
+                />
                 <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
-          </div>
 
-          <Button onClick={handleSubmit} disabled={loading} className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-lg font-semibold">
-            {loading ? 'Menyimpan...' : 'Simpan Data Tanam'}
-          </Button>
-        </div>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={loading} 
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 h-12 text-lg font-semibold text-white shadow-md hover:shadow-lg transition-all mt-6"
+            >
+              {loading ? 'Menyimpan...' : '✓ Simpan Data Penanaman'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

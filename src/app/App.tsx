@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Toaster, toast } from 'sonner';
 import { projectId, publicAnonKey } from '../../utils/supabase/info';
@@ -9,7 +9,7 @@ import LoginDialog from '@/app/components/LoginDialog';
 import Chatbox from '@/app/components/Chatbox';
 import InputTanam from '@/app/components/InputTanam';
 import InputPanen from '@/app/components/InputPanen';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -222,13 +222,11 @@ export default function App() {
   if (user && role === 'user') {
     return (
       <>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/input-tanam" element={<InputTanam user={user} onBack={() => window.location.href = '/'} />} />
-            <Route path="/input-panen" element={<InputPanen user={user} onBack={() => window.location.href = '/'} />} />
-            <Route path="/*" element={<UserPanel user={user} onLogout={handleLogout} />} />
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/input-tanam" element={<InputTanam user={user} onBack={() => window.location.href = '/'} />} />
+          <Route path="/input-panen" element={<InputPanen user={user} onBack={() => window.location.href = '/'} />} />
+          <Route path="/*" element={<UserPanel user={user} onLogout={handleLogout} />} />
+        </Routes>
         <Chatbox />
         <Toaster position="top-right" richColors />
       </>

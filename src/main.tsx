@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from 'react-router-dom';
 import App from "./app/App"; // Menghapus .tsx biasanya lebih aman di Vite
 import "./styles/index.css";
 
@@ -9,7 +10,9 @@ if (!rootElement) throw new Error("Gagal menemukan elemen root. Pastikan index.h
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>
 );
 

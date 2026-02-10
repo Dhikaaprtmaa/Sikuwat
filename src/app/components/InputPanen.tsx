@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CalendarIcon, Wheat } from 'lucide-react';
+import { CalendarIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export default function InputPanen({ user, onBack }: Props) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [plantings, setPlantings] = useState<any[]>([]);
   const [form, setForm] = useState({ plantingId: '', harvestDate: '', harvestYield: '', sellingPrice: '' });
@@ -63,14 +61,13 @@ export default function InputPanen({ user, onBack }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <Button variant="ghost" onClick={() => { if (onBack) onBack(); else navigate('/'); }} className="px-3">Kembali</Button>
-          <h2 className="text-2xl font-bold flex items-center gap-2"><Wheat className="h-6 w-6" /> Input Panen</h2>
-        </div>
+    <div>
+      <div className="mb-6 flex items-center gap-3">
+        <Button variant="ghost" onClick={onBack} className="px-3"><ArrowLeft className="h-4 w-4 mr-2" />Kembali</Button>
+        <h2 className="text-2xl font-bold">Input Panen</h2>
+      </div>
 
-        <div className="space-y-4 max-w-2xl">
+      <div className="space-y-4 max-w-2xl">
           <div>
             <Label htmlFor="plantingId">Pilih Penanaman</Label>
             <select id="plantingId" value={form.plantingId} onChange={(e) => setForm({ ...form, plantingId: e.target.value })} className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md">
@@ -105,7 +102,6 @@ export default function InputPanen({ user, onBack }: Props) {
             {loading ? 'Menyimpan...' : 'Simpan Data Panen'}
           </Button>
         </div>
-      </div>
     </div>
   );
 }

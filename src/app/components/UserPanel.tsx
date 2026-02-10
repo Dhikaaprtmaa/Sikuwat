@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 
 import { toast } from 'sonner';
 import AiChatWidget from '@/app/components/AiChatWidget';
-import { useNavigate } from 'react-router-dom';
+import InputTanam from '@/app/components/InputTanam';
+import InputPanen from '@/app/components/InputPanen';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
@@ -27,7 +28,6 @@ const supabase = createClient(
 );
 
 export default function UserPanel({ user, onLogout }: UserPanelProps) {
-  const navigate = useNavigate();
   // Safety check for user prop
   if (!user || !user.id) {
     return (
@@ -48,7 +48,7 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
 
   const [plantings, setPlantings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'input' | 'reports'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'input-tanam' | 'input-panen' | 'reports'>('dashboard');
   const [dashboardMetrics, setDashboardMetrics] = useState({
     totalPlantings: 0,
     totalSeeds: 0,
@@ -1179,38 +1179,25 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
             </div>
           </CardHeader>
           <CardContent className="p-6 md:p-8">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'dashboard' | 'input' | 'reports')} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-xl p-1 mb-6">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'dashboard' | 'input-tanam' | 'input-panen' | 'reports')} className="w-full">
+              <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-xl p-1 mb-6">
                 <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
                   <BarChart3 className="h-4 w-4" />
                   Dashboard
                 </TabsTrigger>
-                  <TabsTrigger
-                    value="input"
-                    onClick={() => { if (typeof (/* not null */ ({} as any)) !== 'undefined') {} }}
-                    className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <button
-                      type="button"
-                      onClick={(e) => { e.preventDefault(); navigate('/input-tanam'); }}
-                      className="inline"
-                    >
-                      Input Data
-                    </button>
-                  </TabsTrigger>
+                <TabsTrigger value="input-tanam" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                  <Sprout className="h-4 w-4" />
+                  Input Tanam
+                </TabsTrigger>
+                <TabsTrigger value="input-panen" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
+                  <Wheat className="h-4 w-4" />
+                  Input Panen
+                </TabsTrigger>
                 <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
                   <BookOpen className="h-4 w-4" />
                   Laporan
                 </TabsTrigger>
               </TabsList>
-
-              <div className="mb-4">
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => navigate('/input-tanam')}>Buka Input Tanam</Button>
-                  <Button variant="outline" onClick={() => navigate('/input-panen')}>Buka Input Panen</Button>
-                </div>
-              </div>
 
               <TabsContent value="dashboard" className="space-y-6 mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1553,6 +1540,14 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
                     </Button>
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="input-tanam" className="space-y-6 mt-6">
+                <InputTanam user={user} onBack={() => setActiveTab('dashboard')} />
+              </TabsContent>
+
+              <TabsContent value="input-panen" className="space-y-6 mt-6">
+                <InputPanen user={user} onBack={() => setActiveTab('dashboard')} />
               </TabsContent>
 
               <TabsContent value="reports" className="space-y-6 mt-6">

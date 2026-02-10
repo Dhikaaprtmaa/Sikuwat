@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CalendarIcon, Plus } from 'lucide-react';
+import { CalendarIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export default function InputTanam({ user, onBack }: Props) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
 
@@ -55,14 +53,13 @@ export default function InputTanam({ user, onBack }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <Button variant="ghost" onClick={() => { if (onBack) onBack(); else navigate('/'); }} className="px-3">Kembali</Button>
-          <h2 className="text-2xl font-bold flex items-center gap-2"><Plus className="h-6 w-6" /> Input Tanam</h2>
-        </div>
+    <div>
+      <div className="mb-6 flex items-center gap-3">
+        <Button variant="ghost" onClick={onBack} className="px-3"><ArrowLeft className="h-4 w-4 mr-2" />Kembali</Button>
+        <h2 className="text-2xl font-bold">Input Tanam</h2>
+      </div>
 
-        <div className="space-y-4 max-w-2xl">
+      <div className="space-y-4 max-w-2xl">
           <div>
             <Label htmlFor="seedType">Jenis Bibit (Cabai, Tomat, Sawi)</Label>
             <Input id="seedType" placeholder="Contoh: Cabai Merah" value={form.seedType} onChange={(e) => setForm({ ...form, seedType: e.target.value })} className="mt-1" />
@@ -95,7 +92,6 @@ export default function InputTanam({ user, onBack }: Props) {
             {loading ? 'Menyimpan...' : 'Simpan Data Tanam'}
           </Button>
         </div>
-      </div>
     </div>
   );
 }

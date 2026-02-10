@@ -7,8 +7,6 @@ import AdminPanel from '@/app/components/AdminPanel';
 import UserPanel from '@/app/components/UserPanel';
 import LoginDialog from '@/app/components/LoginDialog';
 import Chatbox from '@/app/components/Chatbox';
-import InputTanam from '@/app/components/InputTanam';
-import InputPanen from '@/app/components/InputPanen';
 import { Routes, Route } from 'react-router-dom';
 
 // Error Boundary Component
@@ -223,8 +221,6 @@ export default function App() {
     return (
       <>
         <Routes>
-          <Route path="/input-tanam" element={<InputTanam user={user} onBack={() => window.location.href = '/'} />} />
-          <Route path="/input-panen" element={<InputPanen user={user} onBack={() => window.location.href = '/'} />} />
           <Route path="/*" element={<UserPanel user={user} onLogout={handleLogout} />} />
         </Routes>
         <Chatbox />

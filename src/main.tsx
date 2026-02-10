@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from 'react-router-dom';
@@ -7,6 +8,10 @@ import "./styles/index.css";
 const rootElement = document.getElementById("root");
 
 if (!rootElement) throw new Error("Gagal menemukan elemen root. Pastikan index.html memiliki <div id='root'></div>");
+
+// Expose React as a global to support any third-party bundle
+// that expects a global `React` variable (pre-bundled UMD modules).
+(window as any).React = React;
 
 createRoot(rootElement).render(
   <StrictMode>

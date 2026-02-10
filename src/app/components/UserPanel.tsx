@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LogOut, CalendarIcon, Leaf, TrendingUp, DollarSign, BarChart3, BookOpen, Plus, Download, Sprout, Wheat, Target, Sparkles, Award, Orange } from 'lucide-react';
+import { LogOut, CalendarIcon, Leaf, TrendingUp, DollarSign, BarChart3, BookOpen, Plus, Download, Sprout, Wheat, Target, Sparkles } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
@@ -7,9 +7,10 @@ import { Label } from '@/app/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/app/components/ui/alert-dialog';
+
 import { toast } from 'sonner';
 import AiChatWidget from '@/app/components/AiChatWidget';
+import { useNavigate } from 'react-router-dom';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
@@ -26,6 +27,7 @@ const supabase = createClient(
 );
 
 export default function UserPanel({ user, onLogout }: UserPanelProps) {
+  const navigate = useNavigate();
   // Safety check for user prop
   if (!user || !user.id) {
     return (
@@ -361,7 +363,6 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
           console.error('Error message:', insertError.message);
           console.error('Error details:', insertError.details);
           console.error('Error hint:', insertError.hint);
-          console.error('Error status:', insertError.status);
           console.error('Tried to insert:', plantingData);
           console.error('Current auth.uid():', sessionData.session?.user?.id);
           
@@ -1184,15 +1185,32 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
                   <BarChart3 className="h-4 w-4" />
                   Dashboard
                 </TabsTrigger>
-                <TabsTrigger value="input" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
-                  <Plus className="h-4 w-4" />
-                  Input Data
-                </TabsTrigger>
+                  <TabsTrigger
+                    value="input"
+                    onClick={() => { if (typeof (/* not null */ ({} as any)) !== 'undefined') {} }}
+                    className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <button
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); navigate('/input-tanam'); }}
+                      className="inline"
+                    >
+                      Input Data
+                    </button>
+                  </TabsTrigger>
                 <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">
                   <BookOpen className="h-4 w-4" />
                   Laporan
                 </TabsTrigger>
               </TabsList>
+
+              <div className="mb-4">
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => navigate('/input-tanam')}>Buka Input Tanam</Button>
+                  <Button variant="outline" onClick={() => navigate('/input-panen')}>Buka Input Panen</Button>
+                </div>
+              </div>
 
               <TabsContent value="dashboard" className="space-y-6 mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

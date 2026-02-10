@@ -53,8 +53,8 @@ export default function InputTanam({ user }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="border-emerald-200 shadow-lg">
+    <div className="space-y-6 flex justify-center">
+      <Card className="border-emerald-200 shadow-lg w-full max-w-2xl">
         <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-200">
           <div className="flex items-center gap-3">
             <div className="bg-emerald-600 p-2 rounded-lg">
@@ -67,7 +67,7 @@ export default function InputTanam({ user }: Props) {
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="space-y-5 max-w-3xl">
+          <div className="space-y-5">
             <div>
               <Label htmlFor="seedType" className="text-base font-semibold text-gray-700">Jenis Bibit</Label>
               <p className="text-sm text-gray-500 mb-2">Contoh: Cabai Merah, Tomat, Sawi</p>

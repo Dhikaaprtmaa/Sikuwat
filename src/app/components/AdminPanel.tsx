@@ -9,6 +9,7 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/app/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { toast } from 'sonner';
+import Chatbox from '@/app/components/Chatbox';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
 import * as XLSX from 'xlsx';
@@ -2380,6 +2381,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
           )}
         </DialogContent>
       </Dialog>
+      <Chatbox />
     </div>
   );
 }

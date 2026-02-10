@@ -61,8 +61,8 @@ export default function InputPanen({ user }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="border-amber-200 shadow-lg">
+    <div className="space-y-6 flex justify-center">
+      <Card className="border-amber-200 shadow-lg w-full max-w-2xl">
         <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
           <div className="flex items-center gap-3">
             <div className="bg-amber-600 p-2 rounded-lg">
@@ -75,7 +75,7 @@ export default function InputPanen({ user }: Props) {
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="space-y-5 max-w-3xl">
+          <div className="space-y-5">
             <div>
               <Label htmlFor="plantingId" className="text-base font-semibold text-gray-700">Pilih Penanaman</Label>
               <p className="text-sm text-gray-500 mb-2">Pilih penanaman yang akan dipanen</p>

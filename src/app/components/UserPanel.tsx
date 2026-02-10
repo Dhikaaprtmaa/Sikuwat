@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { toast } from 'sonner';
 import InputTanam from '@/app/components/InputTanam';
 import InputPanen from '@/app/components/InputPanen';
+import Chatbox from '@/app/components/Chatbox';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { createClient } from '@supabase/supabase-js';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
@@ -1946,6 +1947,7 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
           animation-delay: 4s;
         }
       `}</style>
+      <Chatbox />
     </div>
   );
 }

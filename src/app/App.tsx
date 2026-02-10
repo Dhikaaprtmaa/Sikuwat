@@ -41,12 +41,18 @@ const supabase = createClient(
   publicAnonKey
 );
 
+// Validate env vars
+if (!projectId || !publicAnonKey) {
+  console.error('❌ Missing Supabase credentials:', { projectId, publicAnonKey });
+}
+
 export default function App() {
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<'admin' | 'user' | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [loginMode, setLoginMode] = useState<'admin' | 'user'>('user');
+  const [error, setError] = useState<string | null>(null);
 
   // Check session on mount
   useEffect(() => {
@@ -78,6 +84,7 @@ export default function App() {
 
       if (error) {
         console.error('Session check error:', error);
+        setError('Session check failed: ' + error.message);
       }
 
       if (session?.user) {
@@ -86,9 +93,12 @@ export default function App() {
         setRole(session.user.user_metadata?.role || null);
       } else {
         console.log('No existing session');
+        setUser(null);
+        setRole(null);
       }
     } catch (error) {
       console.error('Session check failed:', error);
+      setError('Session check error: ' + String(error));
     } finally {
       setLoading(false);
     }
@@ -200,6 +210,24 @@ export default function App() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
           <p className="mt-4 text-green-700">Loading Sikuwat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error UI if there's an error
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
+        <div className="text-center bg-white rounded-lg p-8 max-w-md shadow-lg">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">❌ Error</h2>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700"
+          >
+            Reload Halaman
+          </button>
         </div>
       </div>
     );

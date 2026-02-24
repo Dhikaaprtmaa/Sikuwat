@@ -6,6 +6,7 @@ import { Card } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import AiChatWidget from '@/app/components/AiChatWidget';
+import InstallPrompt from '@/app/components/InstallPrompt';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
 // Initialize Supabase client
@@ -1279,6 +1280,8 @@ export default function Dashboard({ onLoginClick, role, showInstallButton, onIns
           </div>
         </div>
       </footer>
+
+      <InstallPrompt />
 
       <style>{`
         @keyframes blob {

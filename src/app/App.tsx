@@ -253,7 +253,12 @@ export default function App() {
 
   return (
     <>
-      <Dashboard onLoginClick={openLoginDialog} role={role} showInstallButton={false} onInstall={() => {}} />
+      <Dashboard
+        onLoginClick={openLoginDialog}
+        role={role}
+        showInstallButton={true}
+        onInstall={() => window.dispatchEvent(new Event('sikuwat:show-install'))}
+      />
       <LoginDialog
         isOpen={showLoginDialog}
         onClose={() => setShowLoginDialog(false)}

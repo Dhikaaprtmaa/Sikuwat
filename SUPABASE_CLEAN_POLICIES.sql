@@ -68,6 +68,12 @@ CREATE POLICY "plantings_update_self" ON public.plantings
   FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "plantings_delete_self" ON public.plantings
   FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "plantings_select_admin" ON public.plantings
+  FOR SELECT USING (auth.uid() IN (SELECT id FROM public.admin_users));
+CREATE POLICY "plantings_update_admin" ON public.plantings
+  FOR UPDATE USING (auth.uid() IN (SELECT id FROM public.admin_users));
+CREATE POLICY "plantings_delete_admin" ON public.plantings
+  FOR DELETE USING (auth.uid() IN (SELECT id FROM public.admin_users));
 
 -- 3b. Pastikan user_name tidak null
 ALTER TABLE public.plantings ALTER COLUMN user_name SET DEFAULT 'Pengguna';

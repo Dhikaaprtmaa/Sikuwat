@@ -56,15 +56,12 @@ export default function App() {
       console.log('Auth state changed:', event, session?.user?.email);
 
       if (session?.user) {
-        setUser(session.user);
-        const userRole = session.user.user_metadata?.role === 'admin' ? 'admin' : 'user';
-        setRole(userRole);
-        console.log('User role set to:', userRole);
+        await checkSession();
       } else {
         setUser(null);
         setRole(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -82,9 +79,31 @@ export default function App() {
 
       if (session?.user) {
         console.log('Found existing session for:', session.user.email);
+
+        let profileRole: 'admin' | 'user' = session.user.user_metadata?.role === 'admin' ? 'admin' : 'user';
+        let isApproved = false;
+        let profileFound = false;
+
+        try {
+          const profile = await fetchUserProfile(session.user.id);
+          if (profile) {
+            profileFound = true;
+            if (profile.role) {
+              profileRole = profile.role === 'admin' ? 'admin' : 'user';
+            }
+            isApproved = profile.is_approved ?? false;
+          }
+        } catch (profileError) {
+          console.warn('Unable to load profile during session check, using auth metadata if available.', profileError);
+        }
+
         setUser(session.user);
-        const userRole = session.user.user_metadata?.role === 'admin' ? 'admin' : 'user';
-        setRole(userRole);
+        setRole(profileRole);
+        
+        // Show warning if user is not approved yet
+        if (profileRole !== 'admin' && !isApproved) {
+          toast.warning('Akun Anda belum disetujui oleh admin. Tunggu persetujuan untuk menambah data baru.');
+        }
       } else {
         console.log('No existing session');
         setUser(null);
@@ -98,11 +117,25 @@ export default function App() {
     }
   };
 
+  const fetchUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('role, is_approved')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching profile data:', error);
+      throw error;
+    }
+
+    return data;
+  };
+
   const handleLogin = async (email: string, password: string) => {
     try {
       console.log('Attempting login for:', email, 'mode:', loginMode);
 
-      // Use Supabase client auth directly instead of custom endpoint
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -121,14 +154,35 @@ export default function App() {
         throw new Error('Login gagal: data pengguna tidak ditemukan');
       }
 
+      let profileRole: 'admin' | 'user' = loggedUser.user_metadata?.role === 'admin' ? 'admin' : 'user';
+      let isApproved = false;
+      let profileFound = false;
+
+      try {
+        const profile = await fetchUserProfile(loggedUser.id);
+        if (profile) {
+          profileFound = true;
+          if (profile.role) {
+            profileRole = profile.role === 'admin' ? 'admin' : 'user';
+          }
+          isApproved = profile.is_approved ?? false;
+        }
+      } catch (profileError) {
+        console.warn('Unable to load profile during login, using auth metadata if available.', profileError);
+      }
+
       console.log('Login successful for:', loggedUser.email);
       setUser(loggedUser);
-      const userRole = loggedUser.user_metadata?.role === 'admin' ? 'admin' : 'user';
-      setRole(userRole);
-      console.log('User role set to:', userRole);
+      setRole(profileRole);
+      console.log('User role set to:', profileRole);
 
       setShowLoginDialog(false);
-      toast.success('Login berhasil!');
+      
+      if (profileRole !== 'admin' && !isApproved) {
+        toast.warning('Akun Anda belum disetujui oleh admin. Tunggu persetujuan untuk menambah data baru.');
+      } else {
+        toast.success('Login berhasil!');
+      }
     } catch (error: any) {
       console.error('Login failed:', error);
       toast.error(error.message || 'Login gagal');
@@ -153,15 +207,25 @@ export default function App() {
 
       console.log('✅ [SIGNUP] Auth account created for:', data.user?.email, 'ID:', data.user?.id);
 
-      const signupUser = data.user || (await supabase.auth.getSession()).data.session?.user;
+      const signupUser = data.user || data.session?.user || (await supabase.auth.getSession()).data.session?.user;
       if (!signupUser) {
-        throw new Error('Gagal mengambil informasi pengguna setelah pendaftaran');
+        toast.success('Pendaftaran berhasil! Silakan cek email untuk konfirmasi dan tunggu persetujuan admin.');
+        setShowLoginDialog(false);
+        return data;
       }
 
       if (role === 'user') {
-        const { data: profileData, error: profileError } = await supabase
+        const { error: profileError } = await supabase
           .from('profiles')
-          .insert([{ id: signupUser.id, email, name, role, is_approved: false }])
+          .upsert([
+            {
+              id: signupUser.id,
+              email,
+              name,
+              role: 'user',
+              is_approved: false
+            }
+          ], { onConflict: 'id' })
           .select();
 
         if (profileError) {

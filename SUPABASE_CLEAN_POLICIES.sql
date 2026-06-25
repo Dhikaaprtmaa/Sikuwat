@@ -37,6 +37,8 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "profiles_select_self" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "profiles_insert_signup" ON public.profiles
+  FOR INSERT WITH CHECK (true);
 CREATE POLICY "profiles_insert_self" ON public.profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "profiles_update_self" ON public.profiles
@@ -47,6 +49,8 @@ CREATE POLICY "profiles_select_admin" ON public.profiles
   FOR SELECT USING (auth.uid() IN (SELECT id FROM public.admin_users));
 CREATE POLICY "profiles_update_admin" ON public.profiles
   FOR UPDATE USING (auth.uid() IN (SELECT id FROM public.admin_users));
+CREATE POLICY "profiles_delete_admin" ON public.profiles
+  FOR DELETE USING (auth.uid() IN (SELECT id FROM public.admin_users));
 
 -- 3. Hapus semua policy lama pada plantings
 DO $$
@@ -63,11 +67,32 @@ ALTER TABLE public.plantings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "plantings_select_self" ON public.plantings
   FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "plantings_insert_self" ON public.plantings
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND is_approved = true
+    )
+  );
 CREATE POLICY "plantings_update_self" ON public.plantings
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND is_approved = true
+    )
+  );
 CREATE POLICY "plantings_delete_self" ON public.plantings
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND is_approved = true
+    )
+  );
 CREATE POLICY "plantings_select_admin" ON public.plantings
   FOR SELECT USING (auth.uid() IN (SELECT id FROM public.admin_users));
 CREATE POLICY "plantings_update_admin" ON public.plantings

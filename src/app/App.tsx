@@ -118,18 +118,23 @@ export default function App() {
   };
 
   const fetchUserProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('role, is_approved')
-      .eq('id', userId)
-      .maybeSingle();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role, is_approved')
+        .eq('id', userId)
+        .maybeSingle();
 
-    if (error) {
-      console.error('Error fetching profile data:', error);
-      throw error;
+      if (error) {
+        console.warn('Profile table might not exist yet, using defaults:', error.message);
+        return null;
+      }
+
+      return data;
+    } catch (err) {
+      console.warn('Exception fetching profile (table may not exist):', err);
+      return null;
     }
-
-    return data;
   };
 
   const handleLogin = async (email: string, password: string) => {

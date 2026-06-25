@@ -26,11 +26,18 @@ export default function InputPanen({ user }: Props) {
         .is('harvest_date', null)
         .order('created_at', { ascending: false });
 
+      console.log('InputPanen: Query result - data count:', data?.length || 0, 'error:', error);
+      
+      if (data && data.length > 0) {
+        console.log('InputPanen: First record:', data[0]);
+        console.log('InputPanen: All records:', data);
+      }
+
       if (error) {
         console.error('InputPanen: Query error:', error);
         setPlantings([]);
       } else {
-        console.log('InputPanen: Loaded plantings:', data?.length || 0);
+        console.log('InputPanen: Setting plantings state with', data?.length || 0, 'records');
         setPlantings(data || []);
       }
     } catch (err) {

@@ -113,8 +113,11 @@ export default function App() {
         throw new Error(error.message);
       }
 
-      const loggedUser = data.user;
+      const sessionResult = await supabase.auth.getSession();
+      const loggedUser = data.user || sessionResult.data.session?.user;
       if (!loggedUser) {
+        console.error('Login data:', data);
+        console.error('Session data:', sessionResult.data.session);
         throw new Error('Login gagal: data pengguna tidak ditemukan');
       }
 

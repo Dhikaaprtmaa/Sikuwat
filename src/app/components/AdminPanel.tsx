@@ -10,19 +10,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { toast } from 'sonner';
 import AiChatWidget from '@/app/components/AiChatWidget';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../utils/supabase/client';
 import * as XLSX from 'xlsx';
 
 interface AdminPanelProps {
   user: any;
   onLogout: () => void;
 }
-
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 export default function AdminPanel({ onLogout }: AdminPanelProps) {
   const [marketPrices, setMarketPrices] = useState<any[]>([]);

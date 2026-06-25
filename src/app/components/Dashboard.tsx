@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { Menu, X, Leaf, TrendingUp, Newspaper, Lightbulb, Wrench, Sparkles, ArrowRight, DollarSign, Home, ShoppingCart, Mail, MapPin, Instagram, Youtube, Music } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
+import { supabase } from '../../utils/supabase/client';
 import { Card } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import AiChatWidget from '@/app/components/AiChatWidget';
 import InstallPrompt from '@/app/components/InstallPrompt';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
-
-// Initialize Supabase client
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 interface DashboardProps {
   onLoginClick: (mode: 'admin' | 'user') => void;

@@ -5,10 +5,7 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
 import { toast } from 'sonner';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(`https://${projectId}.supabase.co`, publicAnonKey);
+import { supabase } from '../../utils/supabase/client';
 
 interface Props {
   user: any;

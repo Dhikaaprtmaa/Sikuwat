@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { Toaster, toast } from 'sonner';
-import { projectId, publicAnonKey } from '../../utils/supabase/info';
+import { supabase } from '../utils/supabase/client';
 import Dashboard from '@/app/components/Dashboard';
 import AdminPanel from '@/app/components/AdminPanel';
 import UserPanel from '@/app/components/UserPanel';
@@ -35,15 +34,9 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// Initialize Supabase client
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
-
 // Validate env vars
-if (!projectId || !publicAnonKey) {
-  console.error('❌ Missing Supabase credentials:', { projectId, publicAnonKey });
+if (!process.env.VITE_SUPABASE_URL && !process.env.VITE_SUPABASE_ANON_KEY) {
+  console.warn('⚠️ Supabase URL or ANON KEY are not set via env vars. Falling back to default values from utils/supabase/info.');
 }
 
 export default function App() {

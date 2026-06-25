@@ -12,8 +12,7 @@ import { toast } from 'sonner';
 import AiChatWidget from '@/app/components/AiChatWidget';
 import InputTanam from '@/app/components/InputTanam';
 import InputPanen from '@/app/components/InputPanen';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../utils/supabase/client';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
 import * as XLSX from 'xlsx';
 
@@ -21,11 +20,6 @@ interface UserPanelProps {
   user: any;
   onLogout: () => void;
 }
-
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 export default function UserPanel({ user, onLogout }: UserPanelProps) {
   // Safety check for user prop

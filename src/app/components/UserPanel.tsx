@@ -114,6 +114,41 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
     checkUserSession();
   }, []);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const handleDataUpdated = () => {
+      console.log('UserPanel - dataUpdated event received, reloading plantings...');
+      loadPlantings();
+    };
+
+    window.addEventListener('dataUpdated', handleDataUpdated);
+
+    const realtimeChannel = supabase
+      .channel(`plantings-user-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'plantings',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Realtime plantings payload:', payload);
+          loadPlantings();
+        }
+      );
+
+    realtimeChannel.subscribe();
+
+    return () => {
+      window.removeEventListener('dataUpdated', handleDataUpdated);
+      realtimeChannel.unsubscribe();
+      supabase.removeChannel(realtimeChannel);
+    };
+  }, [user?.id]);
+
   const getAccessToken = async () => {
     const { data } = await supabase.auth.getSession();
     return data.session?.access_token || '';

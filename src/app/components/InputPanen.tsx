@@ -46,6 +46,7 @@ export default function InputPanen({ user }: Props) {
       }
 
       toast.success('Data panen berhasil disimpan');
+      window.dispatchEvent(new Event('dataUpdated'));
       setForm({ plantingId: '', harvestDate: '', harvestYield: '', sellingPrice: '' });
       const { data } = await supabase.from('plantings').select('*').eq('user_id', user.id).is('harvest_date', null).order('created_at', { ascending: false });
       setPlantings(data || []);
@@ -142,7 +143,7 @@ export default function InputPanen({ user }: Props) {
                 <div className="w-full">
                   <p className="text-sm font-semibold text-gray-700 mb-2">Total Penjualan</p>
                   <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-lg font-bold text-amber-900">
-                    Rp {(parseFloat(form.harvestYield || 0) * parseFloat(form.sellingPrice || 0)).toLocaleString('id-ID')}
+                    Rp {(parseFloat(String(form.harvestYield || '0')) * parseFloat(String(form.sellingPrice || '0'))).toLocaleString('id-ID')}
                   </div>
                 </div>
               </div>

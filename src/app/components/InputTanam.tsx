@@ -43,7 +43,12 @@ export default function InputTanam({ user }: Props) {
         user_name: getUserName(user)
       };
 
-      const { error } = await supabase.from('plantings').insert([plantingData]);
+      const { error } = await supabase
+        .from('plantings')
+        .insert([plantingData])
+        .select()
+        .maybeSingle();
+
       if (error) {
         console.error('Insert error:', error);
         toast.error('Gagal menyimpan data tanam');
@@ -51,6 +56,7 @@ export default function InputTanam({ user }: Props) {
       }
 
       toast.success('Data penanaman berhasil disimpan');
+      window.dispatchEvent(new Event('dataUpdated'));
       setForm({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
     } catch (err) {
       console.error(err);

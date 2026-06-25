@@ -16,13 +16,65 @@ export default function InputPanen({ user }: Props) {
   const [plantings, setPlantings] = useState<any[]>([]);
   const [form, setForm] = useState({ plantingId: '', harvestDate: '', harvestYield: '', sellingPrice: '' });
 
+  const loadUnharvestedPlantings = async () => {
+    try {
+      console.log('InputPanen: Loading unharvested plantings for user:', user.id);
+      const { data, error } = await supabase
+        .from('plantings')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('harvest_date', null)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('InputPanen: Query error:', error);
+        setPlantings([]);
+      } else {
+        console.log('InputPanen: Loaded plantings:', data?.length || 0);
+        setPlantings(data || []);
+      }
+    } catch (err) {
+      console.error('InputPanen: Exception during load:', err);
+      setPlantings([]);
+    }
+  };
+
   useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase.from('plantings').select('*').eq('user_id', user.id).is('harvest_date', null).order('created_at', { ascending: false });
-      setPlantings(data || []);
+    if (!user?.id) return;
+
+    loadUnharvestedPlantings();
+
+    const handleDataUpdated = () => {
+      console.log('InputPanen: dataUpdated event received');
+      loadUnharvestedPlantings();
     };
-    load();
-  }, [user.id]);
+
+    window.addEventListener('dataUpdated', handleDataUpdated);
+
+    const realtimeChannel = supabase
+      .channel(`plantings-unharvested-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'plantings',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('InputPanen: Realtime update received:', payload);
+          loadUnharvestedPlantings();
+        }
+      );
+
+    realtimeChannel.subscribe();
+
+    return () => {
+      window.removeEventListener('dataUpdated', handleDataUpdated);
+      realtimeChannel.unsubscribe();
+      supabase.removeChannel(realtimeChannel);
+    };
+  }, [user?.id]);
 
   const handleSubmit = async () => {
     if (!form.plantingId || !form.harvestDate || !form.harvestYield) {
@@ -48,8 +100,7 @@ export default function InputPanen({ user }: Props) {
       toast.success('Data panen berhasil disimpan');
       window.dispatchEvent(new Event('dataUpdated'));
       setForm({ plantingId: '', harvestDate: '', harvestYield: '', sellingPrice: '' });
-      const { data } = await supabase.from('plantings').select('*').eq('user_id', user.id).is('harvest_date', null).order('created_at', { ascending: false });
-      setPlantings(data || []);
+      loadUnharvestedPlantings();
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan saat menyimpan');

@@ -11,6 +11,16 @@ interface Props {
   user: any;
 }
 
+const getUserName = (user: any) => {
+  return (
+    user?.user_metadata?.name ||
+    user?.user_metadata?.full_name ||
+    user?.name ||
+    user?.email ||
+    'Pengguna'
+  );
+};
+
 export default function InputTanam({ user }: Props) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
@@ -30,7 +40,7 @@ export default function InputTanam({ user }: Props) {
         planting_date: form.plantingDate,
         harvest_date: form.harvestDate || null,
         user_id: user.id,
-        user_name: user.user_metadata?.name || user.email || ''
+        user_name: getUserName(user)
       };
 
       const { error } = await supabase.from('plantings').insert([plantingData]);

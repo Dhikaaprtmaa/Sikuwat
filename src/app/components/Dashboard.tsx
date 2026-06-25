@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Leaf, TrendingUp, Newspaper, Lightbulb, Wrench, Sparkles, ArrowRight, DollarSign, Home, ShoppingCart, Mail, MapPin, Instagram, Youtube, Music } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { supabase } from '../../utils/supabase/client';
+import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { Card } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';

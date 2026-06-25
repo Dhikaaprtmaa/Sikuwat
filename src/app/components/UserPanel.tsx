@@ -13,6 +13,7 @@ import AiChatWidget from '@/app/components/AiChatWidget';
 import InputTanam from '@/app/components/InputTanam';
 import InputPanen from '@/app/components/InputPanen';
 import { supabase } from '../../utils/supabase/client';
+import { projectId } from '../../../utils/supabase/info';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
 import * as XLSX from 'xlsx';
 
@@ -319,15 +320,24 @@ export default function UserPanel({ user, onLogout }: UserPanelProps) {
       } catch (edgeError) {
         console.warn('Edge Function failed, trying direct database insert:', edgeError);
 
+        const getUserName = (user: any) => {
+          return (
+            user?.user_metadata?.name ||
+            user?.user_metadata?.full_name ||
+            user?.name ||
+            user?.email ||
+            'Pengguna'
+          );
+        };
+
         // Fallback: Simpan langsung ke database menggunakan Supabase client
-        const userName = user?.user_metadata?.name || user?.user_metadata?.full_name || user?.email || 'Unknown User';
         const plantingData = {
           id: `planting_${user.id}_${Date.now()}`,
           seed_type: plantingForm.seedType,
           seed_count: parseInt(plantingForm.seedCount),
           planting_date: plantingForm.plantingDate,
           user_id: user.id,
-          user_name: userName
+          user_name: getUserName(user)
         };
 
         console.log('=== DIRECT DB INSERT ===');

@@ -113,20 +113,16 @@ export default function App() {
         throw new Error(error.message);
       }
 
-      console.log('Login successful for:', data.user?.email);
-
-      // For admin login: ensure admin role is set in JWT
-      if (loginMode === 'admin') {
-        console.log('🔵 [LOGIN] Admin login - ensuring admin role is set in JWT');
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { role: 'admin' }
-        });
-        if (updateError) {
-          console.error('❌ [LOGIN] Failed to set admin role in JWT:', updateError);
-        } else {
-          console.log('✅ [LOGIN] Admin role set in JWT successfully');
-        }
+      const loggedUser = data.user;
+      if (!loggedUser) {
+        throw new Error('Login gagal: data pengguna tidak ditemukan');
       }
+
+      console.log('Login successful for:', loggedUser.email);
+      setUser(loggedUser);
+      const userRole = loggedUser.user_metadata?.role === 'admin' ? 'admin' : 'user';
+      setRole(userRole);
+      console.log('User role set to:', userRole);
 
       setShowLoginDialog(false);
       toast.success('Login berhasil!');

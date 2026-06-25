@@ -23,7 +23,7 @@ export default function InputPanen({ user }: Props) {
         .from('plantings')
         .select('*')
         .eq('user_id', user.id)
-        .eq('harvest_date', null)
+        .is('harvest_date', null)
         .order('created_at', { ascending: false });
 
       console.log('InputPanen: Query result - data count:', data?.length || 0, 'error:', error);

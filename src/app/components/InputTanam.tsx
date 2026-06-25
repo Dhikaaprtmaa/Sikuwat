@@ -32,7 +32,8 @@ export default function InputTanam({ user }: Props) {
         seed_count: parseInt(form.seedCount, 10),
         planting_date: form.plantingDate,
         harvest_date: form.harvestDate || null,
-        user_id: user.id
+        user_id: user.id,
+        user_name: user.user_metadata?.name || user.email || ''
       };
 
       const { error } = await supabase.from('plantings').insert([plantingData]);

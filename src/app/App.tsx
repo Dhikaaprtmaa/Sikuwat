@@ -161,10 +161,15 @@ export default function App() {
 
       console.log('✅ [SIGNUP] Auth account created for:', data.user?.email, 'ID:', data.user?.id);
 
-      if (data.user && role === 'user') {
+      const signupUser = data.user || (await supabase.auth.getSession()).data.session?.user;
+      if (!signupUser) {
+        throw new Error('Gagal mengambil informasi pengguna setelah pendaftaran');
+      }
+
+      if (role === 'user') {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .insert([{ id: data.user.id, email, name, role, is_approved: false }])
+          .insert([{ id: signupUser.id, email, name, role, is_approved: false }])
           .select();
 
         if (profileError) {

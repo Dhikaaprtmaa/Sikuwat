@@ -64,7 +64,7 @@ export default function App() {
 
       if (session?.user) {
         setUser(session.user);
-        const userRole = session.user.user_metadata?.role || null;
+        const userRole = session.user.user_metadata?.role === 'admin' ? 'admin' : 'user';
         setRole(userRole);
         console.log('User role set to:', userRole);
       } else {
@@ -90,7 +90,8 @@ export default function App() {
       if (session?.user) {
         console.log('Found existing session for:', session.user.email);
         setUser(session.user);
-        setRole(session.user.user_metadata?.role || null);
+        const userRole = session.user.user_metadata?.role === 'admin' ? 'admin' : 'user';
+        setRole(userRole);
       } else {
         console.log('No existing session');
         setUser(null);

@@ -24,14 +24,18 @@ export default function InputPanen({ user }: Props) {
         .from('plantings')
         .select('*')
         .eq('user_id', user.id)
-        .is('harvest_date', null)
         .order('created_at', { ascending: false });
 
       console.log('Query result - count:', data?.length || 0);
       console.log('Query error:', error);
       
-      if (data && data.length > 0) {
-        console.log('First record:', data[0]);
+      const unharvested = (data || []).filter((p) => p.harvest_date == null || p.harvest_date === '');
+      console.log('Unharvested records count:', unharvested.length);
+      if (unharvested.length > 0) {
+        console.log('First unharvested record:', unharvested[0]);
+      }
+      if ((data || []).length > 0 && unharvested.length === 0) {
+        console.warn('InputPanen: user has plantings but none are unharvested. Data:', data);
       }
       console.log('=== END DEBUG ===');
 
@@ -39,7 +43,7 @@ export default function InputPanen({ user }: Props) {
         console.error('InputPanen: Query error:', error);
         setPlantings([]);
       } else {
-        setPlantings(data || []);
+        setPlantings(unharvested);
       }
     } catch (err) {
       console.error('InputPanen: Exception during load:', err);

@@ -38,7 +38,7 @@ export default function InputTanam({ user }: Props) {
         seed_type: form.seedType,
         seed_count: parseInt(form.seedCount, 10),
         planting_date: form.plantingDate,
-        harvest_date: form.harvestDate || null,
+        harvest_date: !form.harvestDate || form.harvestDate.trim() === '' ? null : form.harvestDate,
         user_id: user.id,
         user_name: getUserName(user)
       };

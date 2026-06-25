@@ -18,7 +18,8 @@ export default function InputPanen({ user }: Props) {
 
   const loadUnharvestedPlantings = async () => {
     try {
-      console.log('InputPanen: Loading unharvested plantings for user:', user.id);
+      console.log('=== InputPanen DEBUG ===');
+      console.log('Loading unharvested plantings for user:', user.id);
       const { data, error } = await supabase
         .from('plantings')
         .select('*')
@@ -26,18 +27,18 @@ export default function InputPanen({ user }: Props) {
         .is('harvest_date', null)
         .order('created_at', { ascending: false });
 
-      console.log('InputPanen: Query result - data count:', data?.length || 0, 'error:', error);
+      console.log('Query result - count:', data?.length || 0);
+      console.log('Query error:', error);
       
       if (data && data.length > 0) {
-        console.log('InputPanen: First record:', data[0]);
-        console.log('InputPanen: All records:', data);
+        console.log('First record:', data[0]);
       }
+      console.log('=== END DEBUG ===');
 
       if (error) {
         console.error('InputPanen: Query error:', error);
         setPlantings([]);
       } else {
-        console.log('InputPanen: Setting plantings state with', data?.length || 0, 'records');
         setPlantings(data || []);
       }
     } catch (err) {
@@ -150,6 +151,7 @@ export default function InputPanen({ user }: Props) {
                   {plantings.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.seed_type} ({p.seed_count} bibit) - Tanam: {new Date(p.planting_date).toLocaleDateString('id-ID')}
+                      {p.target_harvest_date ? ` | Target panen: ${new Date(p.target_harvest_date).toLocaleDateString('id-ID')}` : ''}
                     </option>
                   ))}
                 </select>

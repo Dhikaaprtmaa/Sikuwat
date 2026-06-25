@@ -67,6 +67,7 @@ CREATE TABLE public.plantings (
   seed_type TEXT NOT NULL,
   seed_count INTEGER NOT NULL,
   planting_date DATE NOT NULL,
+  target_harvest_date DATE,
   harvest_date DATE,
   harvest_yield DECIMAL(10,2),
   sales_amount DECIMAL(10,2),
@@ -78,6 +79,7 @@ CREATE TABLE public.plantings (
 
 -- Step 11: Create indexes on plantings
 CREATE INDEX idx_plantings_user_id ON public.plantings(user_id);
+CREATE INDEX idx_plantings_target_harvest_date ON public.plantings(target_harvest_date);
 CREATE INDEX idx_plantings_harvest_date ON public.plantings(harvest_date);
 CREATE INDEX idx_plantings_created_at ON public.plantings(created_at);
 

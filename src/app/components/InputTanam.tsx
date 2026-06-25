@@ -23,7 +23,7 @@ const getUserName = (user: any) => {
 
 export default function InputTanam({ user }: Props) {
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
+  const [form, setForm] = useState({ seedType: '', seedCount: '', plantingDate: '', targetHarvestDate: '' });
 
   const handleSubmit = async () => {
     if (!form.seedType || !form.seedCount || !form.plantingDate) {
@@ -38,18 +38,23 @@ export default function InputTanam({ user }: Props) {
         seed_type: form.seedType,
         seed_count: parseInt(form.seedCount, 10),
         planting_date: form.plantingDate,
-        harvest_date: !form.harvestDate || form.harvestDate.trim() === '' ? null : form.harvestDate,
+        target_harvest_date: !form.targetHarvestDate || form.targetHarvestDate.trim() === '' ? null : form.targetHarvestDate,
+        harvest_date: null,
         user_id: user.id,
         user_name: getUserName(user)
       };
 
-      console.log('InputTanam: Inserting plantingData:', plantingData);
+      console.log('=== InputTanam DEBUG ===');
+      console.log('User ID:', user.id);
+      console.log('User Email:', user.email);
+      console.log('Inserting plantingData:', plantingData);
 
       const { data: insertedData, error } = await supabase
         .from('plantings')
         .insert([plantingData]);
 
-      console.log('InputTanam: Insert response - data:', insertedData, 'error:', error);
+      console.log('Insert response - data:', insertedData, 'error:', error);
+      console.log('=== END DEBUG ===');
 
       if (error) {
         console.error('InputTanam: Insert error:', error);
@@ -57,16 +62,18 @@ export default function InputTanam({ user }: Props) {
         return;
       }
 
-      console.log('InputTanam: Data penanaman berhasil disimpan:', insertedData);
-      toast.success('Data penanaman berhasil disimpan');
+      console.log('Data penanaman berhasil disimpan:', insertedData);
+      toast.success('Data penanaman berhasil disimpan!');
       
       // Trigger reload di InputPanen
       setTimeout(() => {
+        console.log('Dispatching dataUpdated event');
         window.dispatchEvent(new Event('dataUpdated'));
-      }, 500);
-      setForm({ seedType: '', seedCount: '', plantingDate: '', harvestDate: '' });
+      }, 800);
+      
+      setForm({ seedType: '', seedCount: '', plantingDate: '', targetHarvestDate: '' });
     } catch (err) {
-      console.error(err);
+      console.error('InputTanam Exception:', err);
       toast.error('Terjadi kesalahan saat menyimpan');
     } finally {
       setLoading(false);
@@ -130,13 +137,13 @@ export default function InputTanam({ user }: Props) {
             </div>
 
             <div>
-              <Label htmlFor="harvestDateTarget" className="text-base font-semibold text-gray-700">Target Tanggal Panen <span className="text-gray-400">(Opsional)</span></Label>
+              <Label htmlFor="targetHarvestDate" className="text-base font-semibold text-gray-700">Target Tanggal Panen <span className="text-gray-400">(Opsional)</span></Label>
               <div className="relative mt-2">
                 <Input 
-                  id="harvestDateTarget" 
+                  id="targetHarvestDate" 
                   type="date" 
-                  value={form.harvestDate} 
-                  onChange={(e) => setForm({ ...form, harvestDate: e.target.value })} 
+                  value={form.targetHarvestDate} 
+                  onChange={(e) => setForm({ ...form, targetHarvestDate: e.target.value })} 
                   className="pr-10 h-10 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" 
                 />
                 <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
